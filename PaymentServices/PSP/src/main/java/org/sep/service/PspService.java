@@ -1,0 +1,40 @@
+package org.sep.service;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class PspService {
+
+    private final WebClient.Builder webClientBuilder;
+
+    public String pingAcquirerService(String text) {
+
+        return webClientBuilder.build().get()
+                .uri("http://acquirer-service/api/acquirer/hello",
+                        uriBuilder -> uriBuilder.queryParam("text", text).build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String pingPaypal() {
+        return webClientBuilder.build().get()
+                .uri("http://paypal-service/api/paypal/hello")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String pingCrypto() {
+        return webClientBuilder.build().get()
+                .uri("http://crypto-service/api/crypto/hello")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+}
