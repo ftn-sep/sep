@@ -36,3 +36,12 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### My SQL Host Data ###
+/postgres/
+/postgres-psp/
+/postgres-acquirer/
+/postgres-issuer
+/postgres-pcc/
+/postgres-paypal/
+/postgres-crypto/

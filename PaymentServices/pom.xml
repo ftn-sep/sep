@@ -16,11 +16,13 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>PSP</module>
+        <module>psp</module>
         <module>acquirer-service</module>
         <module>discovery-server</module>
         <module>paypal-service</module>
         <module>crypto-service</module>
+        <module>pcc-service</module>
+        <module>issuer-service</module>
     </modules>
 
     <properties>
@@ -48,6 +50,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:21-alpine</image>
+                    </from>
+                    <to>
+                        <image>registry.hub.docker.com/davidmijailovic/${project.artifactId}</image>
+                    </to>
+                </configuration>
             </plugin>
         </plugins>
     </build>

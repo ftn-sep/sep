@@ -1,0 +1,197 @@
+version: '3'
+
+services:
+  postgres-psp:
+    container_name: postgres-psp
+    image: postgres
+    environment:
+      POSTGRES_DB: pspdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-psp:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: unless-stopped
+
+  postgres-acquirer:
+    container_name: postgres-acquirer
+    image: postgres
+    environment:
+      POSTGRES_DB: acquirer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-acquirer:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  postgres-pcc:
+    container_name: postgres-pcc
+    image: postgres
+    environment:
+      POSTGRES_DB: pcc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-pcc:/data/postgres
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    command: -p 5433
+    restart: unless-stopped
+
+  postgres-issuer:
+    container_name: postgres-issuer
+    image: postgres
+    environment:
+      POSTGRES_DB: issuer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-issuer:/data/postgres
+    expose:
+      - "5434"
+    ports:
+      - "5434:5434"
+    command: -p 5434
+    restart: unless-stopped
+
+  postgres-crypto:
+    container_name: postgres-crypto
+    image: postgres
+    environment:
+      POSTGRES_DB: crypto
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-crypto:/data/postgres
+    expose:
+      - "5435"
+    ports:
+      - "5435:5435"
+    command: -p 5435
+    restart: unless-stopped
+
+  postgres-paypal:
+    container_name: postgres-paypal
+    image: postgres
+    environment:
+      POSTGRES_DB: paypal
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-paypal:/data/postgres
+    expose:
+      - "5436"
+    ports:
+      - "5436:5436"
+    command: -p 5436
+    restart: unless-stopped
+
+
+
+
+  ## Eureka Server
+  discovery-server:
+    image: davidmijailovic/discovery-server:latest
+    container_name: discovery-server
+    pull_policy: always
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+  psp:
+    container_name: psp
+    image: davidmijailovic/psp:latest
+    pull_policy: always
+    ports:
+      - "8181:8080"
+    expose:
+      - "8181"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-psp:5431/pspdb
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+    depends_on:
+      - postgres-psp
+      - discovery-server
+
+  acquirer-service:
+      container_name: acquirer-service
+      image: davidmijailovic/acquirer-service:latest
+      pull_policy: always
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-acquirer:5432/acquirer
+        - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+      depends_on:
+        - postgres-acquirer
+        - discovery-server
+
+  pcc-service:
+    container_name: pcc-service
+    image: davidmijailovic/pcc-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-pcc:5433/pcc
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+    depends_on:
+      - postgres-pcc
+      - discovery-server
+
+  issuer-service:
+    container_name: issuer-service
+    image: davidmijailovic/issuer-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-issuer:5434/issuer
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+    depends_on:
+      - postgres-issuer
+      - discovery-server
+
+  crypto-service:
+    container_name: crypto-service
+    image: davidmijailovic/crypto-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-crypto:5435/crypto
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+    depends_on:
+      - postgres-crypto
+      - discovery-server
+
+  paypal-service:
+    container_name: paypal-service
+    image: davidmijailovic/paypal-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-paypal:5436/paypal
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:password@discovery-server:8761/eureka
+    depends_on:
+      - postgres-paypal
+      - discovery-server

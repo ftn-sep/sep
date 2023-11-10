@@ -37,4 +37,20 @@ public class PspService {
                 .bodyToMono(String.class)
                 .block();
     }
+
+    public String pingCardPayment() {
+        return webClientBuilder.build().get()
+                .uri("http://acquirer-service/api/acquirer/card-payment")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String pingIssuer() {
+        return webClientBuilder.build().get()
+                .uri("http://pcc-service/api/pcc/pingIssuer")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }

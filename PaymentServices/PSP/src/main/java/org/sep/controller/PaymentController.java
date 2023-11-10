@@ -35,5 +35,11 @@ public class PaymentController {
         return this.pspService.pingCrypto();
     }
 
+    @GetMapping(value = "/ping-card-payment")
+    public String pingCardPayment() {
+        System.out.println("Hello from PSP !");
+        return this.pspService.pingCardPayment();
+    }
+
 
 }
