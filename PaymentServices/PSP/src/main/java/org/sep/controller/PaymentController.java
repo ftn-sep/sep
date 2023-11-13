@@ -1,14 +1,16 @@
 package org.sep.controller;
 
+import org.sep.model.dto.PaymentRequest;
 import org.sep.service.PspService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/psp")
 public class PaymentController {
 
+    @Autowired
     private final PspService pspService;
 
     public PaymentController(PspService pspService) {
@@ -39,6 +41,11 @@ public class PaymentController {
     public String pingCardPayment() {
         System.out.println("Hello from PSP !");
         return this.pspService.pingCardPayment();
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String payment(@RequestBody PaymentRequest paymentRequest){
+        return pspService.savePayment(paymentRequest);
     }
 
 
