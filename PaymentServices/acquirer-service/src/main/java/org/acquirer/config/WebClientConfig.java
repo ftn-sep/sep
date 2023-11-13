@@ -1,4 +1,4 @@
-package org.sep.config;
+package org.acquirer.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

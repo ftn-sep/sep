@@ -1,4 +1,4 @@
-package org.sep.service;
+package org.acquirer.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

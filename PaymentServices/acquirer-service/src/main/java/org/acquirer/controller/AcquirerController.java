@@ -1,6 +1,6 @@
-package org.sep.controller;
+package org.acquirer.controller;
 
-import org.sep.service.AcquirerService;
+import org.acquirer.service.AcquirerService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
