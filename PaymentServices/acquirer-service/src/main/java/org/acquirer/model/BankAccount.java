@@ -17,17 +17,9 @@ public class BankAccount {
     @Column
     private Long id;
 
-    @Column
-    private String pan;
-
-    @Column
-    private String cardHolderName;
-
-    @Column
-    private String expireDate;
-
-    @Column
-    private String securityCode;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "card_id")
+    private Card card;
 
     @Column
     private double balance;

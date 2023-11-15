@@ -17,6 +17,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="common" target="17" />
       <module name="PSP" target="17" />
       <module name="psp-service" target="17" />
     </bytecodeTargetLevel>
@@ -25,6 +26,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="PSP" options="-parameters" />
       <module name="acquirer-service" options="-parameters" />
+      <module name="common" options="-parameters" />
       <module name="crypto-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="issuer-service" options="-parameters" />
