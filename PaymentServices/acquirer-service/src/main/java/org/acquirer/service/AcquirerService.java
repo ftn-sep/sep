@@ -63,29 +63,32 @@ public class AcquirerService {
                 .orElseThrow(() -> new NotFoundException("Payment doesn't exists!"));
 
         validatePayment(paymentRequest, payment);
-        validateCard(paymentRequest, payment);
 
         BankAccount sellerBankAcc = bankAccountRepository.findByMerchantId(payment.getMerchantId())
                 .orElseThrow(() -> new NotFoundException("Seller's bank account doesn't exits"));
 
+        IssuerBankPaymentResponse issuerBankResponse = new IssuerBankPaymentResponse();
+
         if (paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0)) {
             sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
         } else {
-            // todo: differentBanksPayment()
+            issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
         }
-
+        payment.setStatus(PaymentStatus.DONE);
         paymentRepository.save(payment);
-        sendTransactionDetailsToPsp(payment);
+        sendTransactionDetailsToPsp(payment, issuerBankResponse);
         List<String> urls = List.of(payment.getSuccessUrl(), payment.getFailedUrl(), payment.getErrorUrl());
         return new PaymentResultResponse(urls.get(payment.getStatus().ordinal()));
     }
 
-    public void sendTransactionDetailsToPsp(Payment payment) {
+    public void sendTransactionDetailsToPsp(Payment payment, IssuerBankPaymentResponse issuerBankResponse) {
 
         TransactionDetails transactionDetails = TransactionDetails.builder()
                 .merchantOrderId(payment.getMerchantOrderId())
                 .paymentId(payment.getId())
                 .paymentStatus(payment.getStatus())
+                .acquirerOrderId(issuerBankResponse.getAcquirerOrderId())
+                .acquirerTimestamp(issuerBankResponse.getAcquirerTimeStamp())
                 .build();
 
         webClientBuilder.build().post()
@@ -121,39 +124,6 @@ public class AcquirerService {
 
         if (!paymentRequest.getUuid().equals(payment.getUuid())) {
             throw new BadRequestException("Tokens for payment doesn't match");
-        }
-    }
-
-
-    private void validateCard(CardDetailsPaymentRequest paymentRequest, Payment payment) {
-        checkIfAllParametersAreSame(paymentRequest, payment);
-        validateCardExpirationDate(paymentRequest);
-    }
-
-    private void validateCardExpirationDate(CardDetailsPaymentRequest paymentRequest) {
-        String[] date = paymentRequest.getCardExpiresIn().split("/");
-        LocalDate expirationDate = LocalDate.of(Integer.parseInt("20" + date[1]),
-                Integer.parseInt(date[0]) + 1, 1).minusDays(1);
-
-        if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
-    }
-
-    private void checkIfAllParametersAreSame(CardDetailsPaymentRequest paymentRequest, Payment payment) {
-        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
-                .orElseThrow(() -> new NotFoundException("Customer's bank account doesn't exist for given pan"));
-
-        // todo: hesirati securityCode
-
-        if (!customerBankAcc.getCard().getSecurityCode().equals(paymentRequest.getSecurityCode())) {
-            throw new BadRequestException("Wrong security code");
-        }
-
-        if (!customerBankAcc.getCard().getCardHolderName().equals(paymentRequest.getCardHolderName())) {
-            throw new BadRequestException("Wrong card holder name");
-        }
-
-        if (!customerBankAcc.getCard().getExpireDate().equals(paymentRequest.getCardExpiresIn())) {
-            throw new BadRequestException("Expiration date doesn't match");
         }
     }
 }

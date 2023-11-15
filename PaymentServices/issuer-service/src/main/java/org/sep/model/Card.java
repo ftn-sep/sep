@@ -26,5 +26,5 @@ public class Card {
     private String expireDate;
 
     @Column
-    private String securityCode;
+    private Integer securityCode;
 }

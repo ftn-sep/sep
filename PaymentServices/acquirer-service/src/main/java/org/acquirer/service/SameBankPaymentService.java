@@ -20,11 +20,11 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class SameBankPaymentService {
 
-    private final WebClient.Builder webClientBuilder;
     private final BankAccountRepository bankAccountRepository;
-    private final PaymentRepository paymentRepository;
 
     public void doPayment(Payment payment, CardDetailsPaymentRequest paymentRequest, BankAccount sellerBankAcc) {
+
+        validateCard(paymentRequest, payment);
 
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
                 .orElseThrow(() -> new NotFoundException("Customer card doesn't exist in acquirer's bank!"));
@@ -38,10 +38,40 @@ public class SameBankPaymentService {
         customerBankAcc.setBalance(customerBankAcc.getBalance() - payment.getAmount());
         sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
 
-        payment.setStatus(PaymentStatus.DONE);
-
         bankAccountRepository.save(customerBankAcc);
         bankAccountRepository.save(sellerBankAcc);
+    }
+
+    private void validateCard(CardDetailsPaymentRequest paymentRequest, Payment payment) {
+        checkIfAllParametersAreSame(paymentRequest, payment);
+        validateCardExpirationDate(paymentRequest);
+    }
+
+    private void validateCardExpirationDate(CardDetailsPaymentRequest paymentRequest) {
+        String[] date = paymentRequest.getCardExpiresIn().split("/");
+        LocalDate expirationDate = LocalDate.of(Integer.parseInt("20" + date[1]),
+                Integer.parseInt(date[0]) + 1, 1).minusDays(1);
+
+        if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
+    }
+
+    private void checkIfAllParametersAreSame(CardDetailsPaymentRequest paymentRequest, Payment payment) {
+        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
+                .orElseThrow(() -> new NotFoundException("Customer's bank account doesn't exist for given pan"));
+
+        // todo: hesirati securityCode
+
+        if (!customerBankAcc.getCard().getSecurityCode().equals(paymentRequest.getSecurityCode())) {
+            throw new BadRequestException("Wrong security code");
+        }
+
+        if (!customerBankAcc.getCard().getCardHolderName().equals(paymentRequest.getCardHolderName())) {
+            throw new BadRequestException("Wrong card holder name");
+        }
+
+        if (!customerBankAcc.getCard().getExpireDate().equals(paymentRequest.getCardExpiresIn())) {
+            throw new BadRequestException("Expiration date doesn't match");
+        }
     }
 
 
