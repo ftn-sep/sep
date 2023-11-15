@@ -51,8 +51,6 @@ public class AcquirerController {
     )
     public ResponseEntity<?> cardDetailsPayment(@RequestBody CardDetailsPaymentRequest paymentRequest) {
 
-        // todo: ovde bi trebalo async ili ne
-
         PaymentResultResponse paymentResult = acquirerService.cardDetailsPayment(paymentRequest);
 
         return ResponseEntity.status(HttpStatus.FOUND)

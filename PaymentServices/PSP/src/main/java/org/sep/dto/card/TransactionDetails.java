@@ -1,4 +1,4 @@
-package org.sep.dto;
+package org.sep.dto.card;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
