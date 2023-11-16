@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e13f1fe4-60e3-4d01-872e-76d0be39cd3b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/CardDetails.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/Card.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/resources/data.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/controller/IssuerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/controller/IssuerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/repository/IssuerRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/controller/PccController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/controller/PccController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+    &quot;customColor&quot;: &quot;&quot;,
+    &quot;associatedIndex&quot;: 5
+    }</component>
+  <component name="ProjectId" id="2Y7yhyvZGLsL1XBQgtaBWdWYCIk" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/card__payment&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-21&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/mdrag/sep/PaymentServices/acquirer-service/src/main/java/org/acquirer&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;f145e1c00a8a96072a5ba6fbbc11b032&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.sep.dto" />
+      <recent name="org.acquirer.dto" />
+      <recent name="org.acquirer.repository" />
+      <recent name="org.sep.dtp" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mdrag\sep\PaymentServices\acquirer-service\src\main\java\org\acquirer" />
+      <recent name="C:\Users\mdrag\sep\PaymentServices\PSP\src\main\java\org\sep" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.sep.model.enums" />
+      <recent name="org.acquirer.dto" />
+      <recent name="org.sep.dto" />
+      <recent name="org.sep.model" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean install" />
+    </option>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.IssuerServiceApplication">
+    <configuration name="AcquirerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="acquirer-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.acquirer.AcquirerServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.acquirer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CryptoServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="crypto-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.CryptoServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiscoveryServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="discovery-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.DiscoveryServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IssuerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="issuer-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.IssuerServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PSPApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="psp" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.PSPApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PaypalServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="paypal-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.PaypalServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PccServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="pcc-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.sep.PccServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.CryptoServiceApplication" />
+      <item itemvalue="Spring Boot.DiscoveryServerApplication" />
+      <item itemvalue="Spring Boot.PaypalServiceApplication" />
+      <item itemvalue="Spring Boot.PSPApplication" />
+      <item itemvalue="Spring Boot.IssuerServiceApplication" />
+      <item itemvalue="Spring Boot.PccServiceApplication" />
+      <item itemvalue="Spring Boot.AcquirerServiceApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.AcquirerServiceApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e13f1fe4-60e3-4d01-872e-76d0be39cd3b" name="Changes" comment="" />
+      <created>1699891037773</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699891037773</updated>
+      <workItem from="1699891039946" duration="10945000" />
+      <workItem from="1699949516403" duration="7634000" />
+      <workItem from="1699967471054" duration="12230000" />
+      <workItem from="1700041877997" duration="8199000" />
+      <workItem from="1700058105177" duration="1898000" />
+      <workItem from="1700081541581" duration="113000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
