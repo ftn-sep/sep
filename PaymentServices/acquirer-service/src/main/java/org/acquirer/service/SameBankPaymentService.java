@@ -1,18 +1,16 @@
 package org.acquirer.service;
 
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.CardDetailsPaymentRequest;
+import org.acquirer.exception.BadRequestException;
+import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
 import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.BankAccountRepository;
-import org.acquirer.repository.PaymentRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -22,30 +20,30 @@ import java.time.LocalDate;
 public class SameBankPaymentService {
 
     private final BankAccountRepository bankAccountRepository;
+    private final TransactionDetailsService transactionDetailsService;
 
     public void doPayment(Payment payment, CardDetailsPaymentRequest paymentRequest, BankAccount sellerBankAcc) {
 
-        validateCard(paymentRequest, payment);
+        validateCard(paymentRequest);
 
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
                 .orElseThrow(() -> new NotFoundException("Customer card doesn't exist in acquirer's bank!"));
 
-        if (customerBankAcc.getBalance() < payment.getAmount()) {
-            payment.setStatus(PaymentStatus.FAILED);
-            return;
-//            throw new BadRequestException("Customer doesn't have enough money");
-        }
-
         payment.setIssuerAccountNumber(customerBankAcc.getAccountNumber());
-        customerBankAcc.setBalance(customerBankAcc.getBalance() - payment.getAmount());
-        sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
 
-        bankAccountRepository.save(customerBankAcc);
-        bankAccountRepository.save(sellerBankAcc);
+        if (customerBankAcc.getBalance() < payment.getAmount()) {
+            transactionDetailsService.onFailedPayment(PaymentStatus.FAILED, payment, "You don't have enough money");
+        } else {
+            customerBankAcc.setBalance(customerBankAcc.getBalance() - payment.getAmount());
+            sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
+
+            bankAccountRepository.save(customerBankAcc);
+            bankAccountRepository.save(sellerBankAcc);
+        }
     }
 
-    private void validateCard(CardDetailsPaymentRequest paymentRequest, Payment payment) {
-        checkIfAllParametersAreSame(paymentRequest, payment);
+    private void validateCard(CardDetailsPaymentRequest paymentRequest) {
+        checkIfCardParametersAreCorrect(paymentRequest);
         validateCardExpirationDate(paymentRequest);
     }
 
@@ -57,22 +55,22 @@ public class SameBankPaymentService {
         if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
     }
 
-    private void checkIfAllParametersAreSame(CardDetailsPaymentRequest paymentRequest, Payment payment) {
+    private void checkIfCardParametersAreCorrect(CardDetailsPaymentRequest paymentRequest) {
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
-                .orElseThrow(() -> new NotFoundException("Customer's bank account doesn't exist for given pan"));
+                .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-        if (!bCryptPasswordEncoder.matches(paymentRequest.getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode().toString())) {
-            throw new BadRequestException("Wrong security code");
+        if (!bCryptPasswordEncoder.matches(paymentRequest.getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode())) {
+            throw new BadRequestException("Something went wrong, try again!");
         }
 
         if (!customerBankAcc.getCard().getCardHolderName().equals(paymentRequest.getCardHolderName())) {
-            throw new BadRequestException("Wrong card holder name");
+            throw new BadRequestException("Something went wrong, try again!");
         }
 
         if (!customerBankAcc.getCard().getExpireDate().equals(paymentRequest.getCardExpiresIn())) {
-            throw new BadRequestException("Expiration date doesn't match");
+            throw new BadRequestException("Something went wrong, try again!");
         }
     }
 

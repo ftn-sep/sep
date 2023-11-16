@@ -1,17 +1,20 @@
 package org.acquirer.service;
 
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.CardDetailsPaymentRequest;
 import org.acquirer.dto.IssuerBankPaymentRequest;
 import org.acquirer.dto.IssuerBankPaymentResponse;
+import org.acquirer.exception.BadRequestException;
+import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
 import org.acquirer.model.enums.PaymentStatus;
+import org.acquirer.repository.BankAccountRepository;
 import org.apache.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TwoBanksPaymentService {
 
     private final WebClient.Builder webClientBuilder;
+    private final TransactionDetailsService transactionDetailsService;
+    private final BankAccountRepository bankAccountRepository;
 
     public IssuerBankPaymentResponse doPayment(Payment payment, CardDetailsPaymentRequest cardDetails, BankAccount sellerBankAcc) {
 
@@ -40,18 +45,25 @@ public class TwoBanksPaymentService {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .body(Mono.just(paymentRequest), IssuerBankPaymentRequest.class)
                 .retrieve()
+                .onStatus(HttpStatus.NOT_FOUND::equals, response -> response.bodyToMono(String.class).map(NotFoundException::new))
+                .onStatus(HttpStatus.BAD_REQUEST::equals, response -> response.bodyToMono(String.class).map(BadRequestException::new))
                 .bodyToMono(IssuerBankPaymentResponse.class)
                 .block();
 
-        if(!issuerBankPaymentResponse.getPaymentStatus().equals(PaymentStatus.DONE)){
-            throw new BadRequestException("Something went wrong !");
-        }
-
         payment.setIssuerAccountNumber(issuerBankPaymentResponse.getIssuerAccountNumber());
-        sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
+
+        if (issuerBankPaymentResponse.getPaymentStatus() == PaymentStatus.FAILED) {
+            transactionDetailsService.onFailedPayment(PaymentStatus.FAILED, payment, "You don't have enough money!");
+        } else if (issuerBankPaymentResponse.getPaymentStatus() == PaymentStatus.ERROR) {
+            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Something went wrong!");
+        } else {
+            sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
+            bankAccountRepository.save(sellerBankAcc);
+        }
         return issuerBankPaymentResponse;
 
     }
+
     private static long generateOrderId() {
         return ThreadLocalRandom.current().nextLong(1000000000);
     }

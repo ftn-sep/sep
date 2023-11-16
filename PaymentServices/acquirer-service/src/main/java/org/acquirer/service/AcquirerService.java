@@ -1,23 +1,18 @@
 package org.acquirer.service;
 
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.MediaType;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.*;
+import org.acquirer.exception.BadRequestException;
+import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
 import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.BankAccountRepository;
 import org.acquirer.repository.PaymentRepository;
-import org.apache.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -32,8 +27,10 @@ public class AcquirerService {
     private final PaymentRepository paymentRepository;
     private final SameBankPaymentService sameBankPaymentService;
     private final TwoBanksPaymentService twoBanksPaymentService;
+    private final TransactionDetailsService transactionDetailsService;
 
     private static final String CARD_DETAILS_PAGE = "http://localhost:4200/acquirer-bank/card-details";
+    private static final String NO_PAYMENT_PAGE = "http://localhost:4200/acquirer-bank/no-payment-page";
     private static final int PAYMENT_LINK_DURATION_MINUTES = 15;
 
     public String pingPcc() {
@@ -60,47 +57,34 @@ public class AcquirerService {
 
     public PaymentResultResponse cardDetailsPayment(CardDetailsPaymentRequest paymentRequest) {
 
-        Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
-                .orElseThrow(() -> new NotFoundException("Payment doesn't exists!"));
+        try {
+            Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
+                    .orElseThrow(() -> new NotFoundException(NO_PAYMENT_PAGE)); // todo: default error page?
 
-        validatePayment(paymentRequest, payment);
+            validatePayment(paymentRequest, payment);
 
-        BankAccount sellerBankAcc = bankAccountRepository.findByMerchantId(payment.getMerchantId())
-                .orElseThrow(() -> new NotFoundException("Seller's bank account doesn't exits"));
+            BankAccount sellerBankAcc = bankAccountRepository.findByMerchantId(payment.getMerchantId())
+                    .orElseThrow(() -> new NotFoundException(payment.getErrorUrl()));
+            payment.setAcquirerAccountNumber(sellerBankAcc.getAccountNumber());
 
-        IssuerBankPaymentResponse issuerBankResponse = new IssuerBankPaymentResponse();
+            IssuerBankPaymentResponse issuerBankResponse = null;
 
-        if (paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0)) {
-            sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
-        } else {
-            issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
+            if (paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0)) {
+                sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
+            } else {
+                issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
+            }
+
+            transactionDetailsService.onSuccessPayment(payment, issuerBankResponse);
+
+            return new PaymentResultResponse(payment.getSuccessUrl());
+
+        } catch (NotFoundException | BadRequestException e) {
+            return new PaymentResultResponse(e.getMessage());
+            // todo: nzm
         }
-
-        payment.setStatus(PaymentStatus.DONE);
-        payment.setAcquirerAccountNumber(sellerBankAcc.getAccountNumber());
-        paymentRepository.save(payment);
-
-        sendTransactionDetailsToPsp(payment, issuerBankResponse);
-        List<String> urls = List.of(payment.getSuccessUrl(), payment.getFailedUrl(), payment.getErrorUrl());
-        return new PaymentResultResponse(urls.get(payment.getStatus().ordinal()));
     }
 
-    public void sendTransactionDetailsToPsp(Payment payment, IssuerBankPaymentResponse issuerBankResponse) {
-
-        TransactionDetails transactionDetails = TransactionDetails.builder()
-                .merchantOrderId(payment.getMerchantOrderId())
-                .paymentId(payment.getId())
-                .paymentStatus(payment.getStatus())
-                .acquirerOrderId(issuerBankResponse.getAcquirerOrderId())
-                .acquirerTimestamp(issuerBankResponse.getAcquirerTimeStamp())
-                .build();
-
-        webClientBuilder.build().post()
-                .uri("http://psp-service/api/psp/transaction-details")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .body(Mono.just(transactionDetails), TransactionDetails.class)
-                .exchange().toFuture();
-    }
 
     private void validatePaymentUrlRequest(PaymentUrlAndIdRequest paymentRequest) {
         BankAccount bankAccount = bankAccountRepository.findByMerchantId(paymentRequest.getMerchantId())
@@ -123,13 +107,15 @@ public class AcquirerService {
         }
 
         if (payment.getValidUntil().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Link is expired");
+            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Link is expired");
         }
 
         if (!paymentRequest.getUuid().equals(payment.getUuid())) {
-            throw new BadRequestException("Tokens for payment doesn't match");
+            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Something went wrong, try again");
         }
     }
+
+
 }
 
 

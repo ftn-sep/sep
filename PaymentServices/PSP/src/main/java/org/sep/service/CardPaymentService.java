@@ -1,6 +1,5 @@
 package org.sep.service;
 
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
@@ -8,13 +7,16 @@ import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.TransactionDetails;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.exception.BadRequestException;
 import org.sep.exception.NotFoundException;
 import org.sep.model.Payment;
 import org.sep.model.Seller;
 import org.sep.model.enums.PaymentStatus;
 import org.sep.repository.PaymentRepository;
 import org.sep.repository.SellerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -75,6 +77,12 @@ public class CardPaymentService {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .body(Mono.just(paymentReq), PaymentUrlAndIdRequest.class)
                 .retrieve()
+
+                .onStatus(HttpStatus.NOT_FOUND::equals,
+                        response -> response.bodyToMono(String.class).map(NotFoundException::new))
+                .onStatus(HttpStatus.BAD_REQUEST::equals,
+                        response -> response.bodyToMono(String.class).map(BadRequestException::new))
+
                 .bodyToMono(PaymentUrlIdResponse.class)
                 .block();
     }

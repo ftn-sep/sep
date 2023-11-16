@@ -1,15 +1,19 @@
 package org.sep.service;
 
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.sep.dto.AcquirerBankPaymentRequest;
 import org.sep.dto.IssuerBankPaymentResponse;
+import org.sep.exception.BadRequestException;
+import org.sep.exception.NotFoundException;
 import org.sep.model.Payment;
+import org.sep.model.enums.PaymentStatus;
 import org.sep.repository.PaymentRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -37,6 +41,8 @@ public class PccService {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .body(Mono.just(paymentRequest), AcquirerBankPaymentRequest.class)
                 .retrieve()
+                .onStatus(HttpStatus.NOT_FOUND::equals, response -> response.bodyToMono(String.class).map(NotFoundException::new))
+                .onStatus(HttpStatus.BAD_REQUEST::equals, response -> response.bodyToMono(String.class).map(BadRequestException::new))
                 .bodyToMono(IssuerBankPaymentResponse.class)
                 .block();
 
