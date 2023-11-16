@@ -32,6 +32,7 @@ public class TwoBanksPaymentService {
                 .acquirerOrderId(generateOrderId())
                 .acquirerTimeStamp(LocalDateTime.now())
                 .amount(payment.getAmount())
+                .acquirerAccountNumber(sellerBankAcc.getAccountNumber())
                 .build();
 
         IssuerBankPaymentResponse issuerBankPaymentResponse = webClientBuilder.build().post()
@@ -46,6 +47,7 @@ public class TwoBanksPaymentService {
             throw new BadRequestException("Something went wrong !");
         }
 
+        payment.setIssuerAccountNumber(issuerBankPaymentResponse.getIssuerAccountNumber());
         sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
         return issuerBankPaymentResponse;
 

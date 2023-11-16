@@ -10,6 +10,7 @@ import org.acquirer.model.Payment;
 import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.BankAccountRepository;
 import org.acquirer.repository.PaymentRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -35,6 +36,7 @@ public class SameBankPaymentService {
 //            throw new BadRequestException("Customer doesn't have enough money");
         }
 
+        payment.setIssuerAccountNumber(customerBankAcc.getAccountNumber());
         customerBankAcc.setBalance(customerBankAcc.getBalance() - payment.getAmount());
         sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
 
@@ -59,9 +61,9 @@ public class SameBankPaymentService {
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
                 .orElseThrow(() -> new NotFoundException("Customer's bank account doesn't exist for given pan"));
 
-        // todo: hesirati securityCode
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-        if (!customerBankAcc.getCard().getSecurityCode().equals(paymentRequest.getSecurityCode())) {
+        if (!bCryptPasswordEncoder.matches(paymentRequest.getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode().toString())) {
             throw new BadRequestException("Wrong security code");
         }
 

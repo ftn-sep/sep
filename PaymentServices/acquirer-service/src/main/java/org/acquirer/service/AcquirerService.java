@@ -75,8 +75,11 @@ public class AcquirerService {
         } else {
             issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
         }
+
         payment.setStatus(PaymentStatus.DONE);
+        payment.setAcquirerAccountNumber(sellerBankAcc.getAccountNumber());
         paymentRepository.save(payment);
+
         sendTransactionDetailsToPsp(payment, issuerBankResponse);
         List<String> urls = List.of(payment.getSuccessUrl(), payment.getFailedUrl(), payment.getErrorUrl());
         return new PaymentResultResponse(urls.get(payment.getStatus().ordinal()));

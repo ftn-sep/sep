@@ -17,4 +17,5 @@ public class IssuerBankPaymentResponse {
     private Long issuerOrderId;
     private LocalDateTime issuerTimeStamp;
     private PaymentStatus paymentStatus;
+    private String issuerAccountNumber;
 }

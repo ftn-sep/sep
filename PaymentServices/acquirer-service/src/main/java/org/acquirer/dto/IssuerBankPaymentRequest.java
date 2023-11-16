@@ -15,6 +15,7 @@ public class IssuerBankPaymentRequest {
     private Long acquirerOrderId;
     private LocalDateTime acquirerTimeStamp;
     private CardDetailsPaymentRequest cardDetails;
+    private String acquirerAccountNumber;
     private double amount;
 }
 
