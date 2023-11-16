@@ -20,5 +20,8 @@ public class BankAccount {
     @Column
     private double balance;
 
+    @Column
+    private String accountNumber;
+
 }
 

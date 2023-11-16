@@ -35,16 +35,22 @@ public class Payment {
     private Long merchantOrderId;
 
     @Column
-    private double amount;
+    private LocalDateTime merchantTimestamp;
 
     @Column
-    private LocalDateTime merchantTimestamp;
+    private double amount;
 
     @Enumerated
     private PaymentStatus status;
 
     @Column
     private LocalDateTime validUntil;
+
+    @Column
+    private String acquirerAccountNumber;
+
+    @Column
+    private String issuerAccountNumber;
 
     @Column
     private String successUrl;

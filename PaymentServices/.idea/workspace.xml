@@ -5,43 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e13f1fe4-60e3-4d01-872e-76d0be39cd3b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/resources/schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/card-payment-page/card-payment-page.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/card-payment-page/card-payment-page.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/card-payment-page/card-payment-page.component.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/card-payment-page/card-payment-page.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/payment-method-page/payment-method-page.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/payment-method-page/payment-method-page.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/payment-method-page/payment-method-page.component.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/payment/payment-method-page/payment-method-page.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/product-page/product-page.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/product-page/product-page.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/product-page/product-page.component.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/modules/product-page/product-page.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/services/acquirer-bank/acquirer-bank.service.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/services/acquirer-bank/acquirer-bank.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/services/psp/psp.service.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/services/psp/psp.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/Payment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/repository/PaymentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSP/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSP/src/main/java/org/sep/controller/CardPaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/java/org/sep/controller/CardPaymentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSP/src/main/java/org/sep/dto/PaymentRequestFromClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/java/org/sep/dto/PaymentRequestFromClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/CardDetailsPaymentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/CardDetailsPaymentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/IssuerBankPaymentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/IssuerBankPaymentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/IssuerBankPaymentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/dto/IssuerBankPaymentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/BankAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/BankAccount.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/model/Payment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/SameBankPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/SameBankPaymentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/resources/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/resources/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/CardDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/CardDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/BankAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/BankAccount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/repository/IssuerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/repository/BankAccountRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/service/IssuerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/service/IssuerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/resources/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/resources/data.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/AcquirerBankPaymentRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/CardDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/CardDetails.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/dto/IssuerBankPaymentResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/model/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/repository/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/repository/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app-routing.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app-routing.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../payment-service-provider-frontend/src/app/app.module.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,18 +50,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "state": "OPEN",
-      "author": "davidmijailovic"
+      &quot;state&quot;: &quot;OPEN&quot;,
+      &quot;author&quot;: &quot;davidmijailovic&quot;
     }
   ],
-  "lastFilter": {
-    "state": "OPEN",
-    "author": "davidmijailovic"
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;author&quot;: &quot;davidmijailovic&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -104,7 +94,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging feature/card__payment",
+    "git-widget-placeholder": "Rebasing bug__fix/card__payment",
     "jdk.selected.JAVA_MODULE": "openjdk-21",
     "last_opened_file_path": "C:/Users/mdrag/sep/PaymentServices/acquirer-service/src/main/java/org/acquirer",
     "node.js.detected.package.eslint": "true",
@@ -149,7 +139,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.PSPApplication">
+  <component name="RunManager" selected="Spring Boot.IssuerServiceApplication">
     <configuration name="AcquirerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="acquirer-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.acquirer.AcquirerServiceApplication" />

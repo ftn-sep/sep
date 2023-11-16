@@ -7,8 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.sep.dto.AcquirerBankPaymentRequest;
 import org.sep.dto.IssuerBankPaymentResponse;
 import org.sep.model.BankAccount;
+import org.sep.model.Payment;
 import org.sep.model.enums.PaymentStatus;
-import org.sep.repository.IssuerRepository;
+import org.sep.repository.BankAccountRepository;
+import org.sep.repository.PaymentRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +23,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class IssuerService {
 
-    private final IssuerRepository bankAccountRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final PaymentRepository paymentRepository;
 
     public IssuerBankPaymentResponse cardPayment(AcquirerBankPaymentRequest paymentRequest) {
 
@@ -39,11 +43,24 @@ public class IssuerService {
 
         issuerBankPaymentResponse.setIssuerOrderId(generateOrderId());
         issuerBankPaymentResponse.setIssuerTimeStamp(LocalDateTime.now());
+        issuerBankPaymentResponse.setIssuerAccountNumber(customerBankAcc.getAccountNumber());
         issuerBankPaymentResponse.setAcquirerOrderId(paymentRequest.getAcquirerOrderId());
         issuerBankPaymentResponse.setAcquirerTimeStamp(paymentRequest.getAcquirerTimeStamp());
         issuerBankPaymentResponse.setPaymentStatus(PaymentStatus.DONE);
-
         bankAccountRepository.save(customerBankAcc);
+
+        Payment payment = Payment.builder()
+                .issuerTimestamp(issuerBankPaymentResponse.getIssuerTimeStamp())
+                .issuerOrderId(issuerBankPaymentResponse.getIssuerOrderId())
+                .status(issuerBankPaymentResponse.getPaymentStatus())
+                .amount(paymentRequest.getAmount())
+                .acquirerAccountNumber(paymentRequest.getAcquirerAccountNumber())
+                .issuerAccountNumber(customerBankAcc.getAccountNumber())
+                .acquirerTimestamp(paymentRequest.getAcquirerTimeStamp())
+                .acquirerOrderId(paymentRequest.getAcquirerOrderId())
+                .build();
+
+        paymentRepository.save(payment);
 
         return issuerBankPaymentResponse;
     }
@@ -69,9 +86,9 @@ public class IssuerService {
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getCardDetails().getPan())
                 .orElseThrow(() -> new NotFoundException("Customer's bank account doesn't exist for given pan"));
 
-        // todo: hesirati securityCode
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-        if (!customerBankAcc.getCard().getSecurityCode().equals(paymentRequest.getCardDetails().getSecurityCode())) {
+        if(!bCryptPasswordEncoder.matches(paymentRequest.getCardDetails().getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode().toString())){
             throw new BadRequestException("Wrong security code");
         }
 

@@ -25,6 +25,9 @@ public class BankAccount {
     private double balance;
 
     @Column
+    private String accountNumber;
+
+    @Column
     private String merchantId;
 
     @Column

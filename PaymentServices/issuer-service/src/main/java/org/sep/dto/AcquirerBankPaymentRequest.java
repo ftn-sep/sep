@@ -16,4 +16,5 @@ public class AcquirerBankPaymentRequest {
     private LocalDateTime acquirerTimeStamp;
     private CardDetails cardDetails;
     private double amount;
+    private String acquirerAccountNumber;
 }
