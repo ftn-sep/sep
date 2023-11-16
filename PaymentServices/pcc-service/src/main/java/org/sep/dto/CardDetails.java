@@ -17,4 +17,3 @@ public class CardDetails {
     private String cardHolderName;
     private String cardExpiresIn;
 }
-

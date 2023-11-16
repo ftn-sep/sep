@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sep.model.enums.PaymentStatus;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,3 +38,4 @@ public class Payment {
     private PaymentStatus status;
 
 }
+

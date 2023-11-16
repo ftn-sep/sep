@@ -17,3 +17,4 @@ public class AcquirerBankPaymentRequest {
     private CardDetails cardDetails;
     private double amount;
 }
+

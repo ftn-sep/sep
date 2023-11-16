@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.MediaType;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.*;
 import org.acquirer.model.BankAccount;

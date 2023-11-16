@@ -8,6 +8,7 @@ import org.sep.dto.AcquirerBankPaymentRequest;
 import org.sep.dto.IssuerBankPaymentResponse;
 import org.sep.model.Payment;
 import org.sep.repository.PaymentRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -20,6 +21,7 @@ public class PccService {
     private final WebClient.Builder webClientBuilder;
     private final PaymentRepository paymentRepository;
 
+
     public String pingIssuer() {
         return webClientBuilder.build().get()
                 .uri("http://issuer-service/api/issuer/card-payment")
@@ -27,7 +29,6 @@ public class PccService {
                 .bodyToMono(String.class)
                 .block();
     }
-
 
     public IssuerBankPaymentResponse cardPayment(AcquirerBankPaymentRequest paymentRequest) {
 
