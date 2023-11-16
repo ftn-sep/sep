@@ -53,9 +53,9 @@ public class TwoBanksPaymentService {
         payment.setIssuerAccountNumber(issuerBankPaymentResponse.getIssuerAccountNumber());
 
         if (issuerBankPaymentResponse.getPaymentStatus() == PaymentStatus.FAILED) {
-            transactionDetailsService.onFailedPayment(PaymentStatus.FAILED, payment, "You don't have enough money!");
+            transactionDetailsService.onFailedPayment(payment);
         } else if (issuerBankPaymentResponse.getPaymentStatus() == PaymentStatus.ERROR) {
-            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Something went wrong!");
+            transactionDetailsService.onErrorPayment(payment);
         } else {
             sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());
             bankAccountRepository.save(sellerBankAcc);

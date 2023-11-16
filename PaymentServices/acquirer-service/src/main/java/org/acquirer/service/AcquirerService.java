@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -57,32 +56,30 @@ public class AcquirerService {
 
     public PaymentResultResponse cardDetailsPayment(CardDetailsPaymentRequest paymentRequest) {
 
-        try {
-            Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
-                    .orElseThrow(() -> new NotFoundException(NO_PAYMENT_PAGE)); // todo: default error page?
+        Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
+                .orElseThrow(() -> new NotFoundException("Payment doesn't exist!")); // todo: default error page?
 
-            validatePayment(paymentRequest, payment);
+        validatePayment(paymentRequest, payment);
 
-            BankAccount sellerBankAcc = bankAccountRepository.findByMerchantId(payment.getMerchantId())
-                    .orElseThrow(() -> new NotFoundException(payment.getErrorUrl()));
-            payment.setAcquirerAccountNumber(sellerBankAcc.getAccountNumber());
+        BankAccount sellerBankAcc = bankAccountRepository.findByMerchantId(payment.getMerchantId())
+                .orElseThrow(() -> new NotFoundException("Seller's bank account doesn't exist in acquire bank"));
+        payment.setAcquirerAccountNumber(sellerBankAcc.getAccountNumber());
 
-            IssuerBankPaymentResponse issuerBankResponse = null;
+        IssuerBankPaymentResponse issuerBankResponse = null;
 
-            if (paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0)) {
-                sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
-            } else {
-                issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
-            }
-
-            transactionDetailsService.onSuccessPayment(payment, issuerBankResponse);
-
-            return new PaymentResultResponse(payment.getSuccessUrl());
-
-        } catch (NotFoundException | BadRequestException e) {
-            return new PaymentResultResponse(e.getMessage());
-            // todo: nzm
+        if (isAccountsInTheSameBank(paymentRequest, sellerBankAcc)) {
+            sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
+        } else {
+            issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
         }
+
+        transactionDetailsService.onSuccessPayment(payment, issuerBankResponse);
+
+        return new PaymentResultResponse(payment.getSuccessUrl());
+    }
+
+    private boolean isAccountsInTheSameBank(CardDetailsPaymentRequest paymentRequest, BankAccount sellerBankAcc) {
+        return paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0);
     }
 
 
@@ -107,15 +104,13 @@ public class AcquirerService {
         }
 
         if (payment.getValidUntil().isBefore(LocalDateTime.now())) {
-            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Link is expired");
+            transactionDetailsService.onErrorPayment(payment);
         }
 
         if (!paymentRequest.getUuid().equals(payment.getUuid())) {
-            transactionDetailsService.onFailedPayment(PaymentStatus.ERROR, payment, "Something went wrong, try again");
+            transactionDetailsService.onErrorPayment(payment);
         }
     }
-
-
 }
 
 

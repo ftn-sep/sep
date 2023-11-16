@@ -5,17 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e13f1fe4-60e3-4d01-872e-76d0be39cd3b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PSP/src/main/java/org/sep/service/CardPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/java/org/sep/service/CardPaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PSP/src/main/java/org/sep/service/PspService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/java/org/sep/service/PspService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSP/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PSP/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/PSP/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/exception/ExceptionResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/exception/ExceptionResolver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/AcquirerService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/SameBankPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/SameBankPaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TransactionDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TransactionDetailsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/java/org/acquirer/service/TwoBanksPaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/model/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/service/IssuerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/java/org/sep/service/IssuerService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/java/org/sep/service/PccService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/acquirer-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/acquirer-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/crypto-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/crypto-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/issuer-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/issuer-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paypal-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/paypal-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paypal-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/paypal-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pcc-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/pcc-service/src/main/resources/application-docker.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,27 +75,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feature/card__payment",
-    "jdk.selected.JAVA_MODULE": "openjdk-21",
-    "last_opened_file_path": "C:/Users/mdrag/sep/PaymentServices/pcc-service/src/main/java/org/sep/exception",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "spring.configuration.checksum": "f145e1c00a8a96072a5ba6fbbc11b032",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/card__payment&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-21&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/mdrag/sep/PaymentServices/pcc-service/src/main/java/org/sep/exception&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;f145e1c00a8a96072a5ba6fbbc11b032&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -125,7 +131,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.AcquirerServiceApplication">
+  <component name="RunManager" selected="Spring Boot.PSPApplication">
     <configuration name="AcquirerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="acquirer-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.acquirer.AcquirerServiceApplication" />
@@ -210,7 +216,9 @@
       <workItem from="1700041877997" duration="8199000" />
       <workItem from="1700058105177" duration="1898000" />
       <workItem from="1700081541581" duration="113000" />
-      <workItem from="1700137207273" duration="13737000" />
+      <workItem from="1700137207273" duration="13823000" />
+      <workItem from="1700158862578" duration="2910000" />
+      <workItem from="1700161790197" duration="1927000" />
     </task>
     <servers />
   </component>

@@ -6,7 +6,6 @@ import org.acquirer.exception.BadRequestException;
 import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
-import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.BankAccountRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class SameBankPaymentService {
         payment.setIssuerAccountNumber(customerBankAcc.getAccountNumber());
 
         if (customerBankAcc.getBalance() < payment.getAmount()) {
-            transactionDetailsService.onFailedPayment(PaymentStatus.FAILED, payment, "You don't have enough money");
+            transactionDetailsService.onFailedPayment(payment);
         } else {
             customerBankAcc.setBalance(customerBankAcc.getBalance() - payment.getAmount());
             sellerBankAcc.setBalance(sellerBankAcc.getBalance() + payment.getAmount());

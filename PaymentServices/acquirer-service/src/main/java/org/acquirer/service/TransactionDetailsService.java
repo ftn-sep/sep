@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.IssuerBankPaymentResponse;
 import org.acquirer.dto.TransactionDetails;
 import org.acquirer.exception.BadRequestException;
+import org.acquirer.exception.ErrorPaymentException;
+import org.acquirer.exception.FailedPaymentException;
 import org.acquirer.model.Payment;
 import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.PaymentRepository;
@@ -24,10 +26,17 @@ public class TransactionDetailsService {
     private final PaymentRepository paymentRepository;
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public void onFailedPayment(PaymentStatus status, Payment payment, String message) throws BadRequestException {
-        changeStatus(status, payment);
+    public void onFailedPayment(Payment payment) throws BadRequestException {
+        changeStatus(PaymentStatus.FAILED, payment);
         sendTransactionDetailsToPsp(payment, null);
-        throw new BadRequestException(message);
+        throw new FailedPaymentException(payment.getFailedUrl());
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void onErrorPayment(Payment payment) throws BadRequestException {
+        changeStatus(PaymentStatus.ERROR, payment);
+        sendTransactionDetailsToPsp(payment, null);
+        throw new ErrorPaymentException(payment.getErrorUrl());
     }
 
     private void changeStatus(PaymentStatus status, Payment payment) {

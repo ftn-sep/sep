@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.net.URI;
+
 @ControllerAdvice
 public class ExceptionResolver {
 
@@ -23,4 +25,19 @@ public class ExceptionResolver {
         headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<>(exception.getMessage(), headers, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(FailedPaymentException.class)
+    public ResponseEntity<?> failedPaymentException(FailedPaymentException exception) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(exception.getMessage()))
+                .build();
+    }
+
+    @ExceptionHandler(ErrorPaymentException.class)
+    public ResponseEntity<?> errorPaymentException(ErrorPaymentException exception) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(exception.getMessage()))
+                .build();
+    }
+
 }
