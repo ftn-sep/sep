@@ -14,6 +14,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/api/acquirer")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AcquirerController {
 
     private final AcquirerService acquirerService;
@@ -55,6 +56,7 @@ public class AcquirerController {
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(paymentResult.getRedirectUrl()))
+                //.header("Access-Control-Allow-Origin", "*")
                 .build();
     }
 }

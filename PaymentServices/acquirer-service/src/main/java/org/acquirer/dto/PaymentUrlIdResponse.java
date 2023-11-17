@@ -11,4 +11,5 @@ public class PaymentUrlIdResponse {
 
     private String paymentUrl;
     private Long paymentId;
+    private double amount;
 }

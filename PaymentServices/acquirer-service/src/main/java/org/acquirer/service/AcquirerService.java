@@ -50,7 +50,7 @@ public class AcquirerService {
 
         String paymentUrl = CARD_DETAILS_PAGE + "/" + uuid + "/" + payment.getId();
 
-        return new PaymentUrlIdResponse(paymentUrl, payment.getId());
+        return new PaymentUrlIdResponse(paymentUrl, payment.getId(), paymentRequest.getAmount());
     }
 
 

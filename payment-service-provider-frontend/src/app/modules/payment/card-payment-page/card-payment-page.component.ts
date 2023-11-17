@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AcquirerBankService } from 'src/app/services/acquirer-bank/acquirer-bank.service';
 
 @Component({
   selector: 'app-card-payment-page',
@@ -8,17 +9,53 @@ import { ActivatedRoute } from '@angular/router';
 })
 
 export class CardPaymentPageComponent implements OnInit {
-  uuid: string | null = null;
-  orderId: string | null = null;
 
-  constructor(private route: ActivatedRoute) { }
+  cardHolderName!: string;
+  pan!: string;
+  cardExpiresIn!: string;
+  securityCode!: string;
+  amount!: number;
+
+  uuid: string | null = null;
+  paymentId: string | null = null;
+
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private acquirerBankService: AcquirerBankService) {
+
+              this.amount = this.router.getCurrentNavigation()?.extras.state!['amount'];
+              }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.uuid = params['uuid'];
-      this.orderId = params['orderId'];
-
-      // Možete koristiti ove vrednosti za dinamičko kreiranje linkova ili druge operacije
+      this.paymentId = params['paymentId'];
     });
+  }
+
+
+  pay(){
+    const paymentDetails = {
+      cardHolderName: this.cardHolderName,
+      pan: this.pan,
+      cardExpiresIn: this.cardExpiresIn,
+      securityCode: this.securityCode,
+      amount: this.amount,
+      uuid: this.uuid,
+      paymentId: this.paymentId
+    }
+
+    this.acquirerBankService.generateUrl(paymentDetails)
+    .subscribe(
+      response => {
+        if (response && response.paymentUrl) {
+          window.location.href = response.paymentUrl;
+        }
+      },
+      error => {
+      }
+    );
+
+
   }
 }

@@ -10,6 +10,7 @@ export class PspService {
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': this.apiHost,
   });
 
   constructor(private http: HttpClient) { }
