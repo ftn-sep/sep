@@ -27,14 +27,16 @@ export class CardPaymentPageComponent implements OnInit {
               }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.uuid = params['uuid'];
-      this.paymentId = params['paymentId'];
-    });
   }
 
 
   pay(){
+
+    this.route.params.subscribe(params => {
+      this.uuid = params['uuid'];
+      this.paymentId = params['paymentId'];
+    });
+    
     const paymentDetails = {
       cardHolderName: this.cardHolderName,
       pan: this.pan,
@@ -48,8 +50,11 @@ export class CardPaymentPageComponent implements OnInit {
     this.acquirerBankService.generateUrl(paymentDetails)
     .subscribe(
       response => {
-        if (response && response.paymentUrl) {
-          window.location.href = response.paymentUrl;
+        if (response && response.redirectUrl) {
+          const parsedUrl = new URL(response.redirectUrl);
+          const path = parsedUrl.pathname;
+
+          this.router.navigate([path])
         }
       },
       error => {

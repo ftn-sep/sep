@@ -175,10 +175,16 @@
      background-color: #fbf6f7;
     background-image: linear-gradient(to bottom, #fbf6f7, #fff);
     border-radius: 2em;
-    block-size: 612px;
+    block-size: 512px;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.0625);
     inline-size: 375px;
     overflow: auto;
     padding: 2em;
   }
   
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10%;
+}

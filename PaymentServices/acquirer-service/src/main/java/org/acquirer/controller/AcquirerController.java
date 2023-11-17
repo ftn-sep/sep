@@ -14,7 +14,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/api/acquirer")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200/")
 public class AcquirerController {
 
     private final AcquirerService acquirerService;
@@ -54,9 +54,12 @@ public class AcquirerController {
 
         PaymentResultResponse paymentResult = acquirerService.cardDetailsPayment(paymentRequest);
 
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(paymentResult.getRedirectUrl()))
-                //.header("Access-Control-Allow-Origin", "*")
-                .build();
+        return new ResponseEntity<>(paymentResult.getRedirectUrl(), HttpStatus.OK);
+
+        // da li redirektovati odavde ili sa fronta ??
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .location(URI.create(paymentResult.getRedirectUrl()))
+//                .header("Access-Control-Allow-Origin", "http://localhost:4200/success-payment")
+//                .build();
     }
 }

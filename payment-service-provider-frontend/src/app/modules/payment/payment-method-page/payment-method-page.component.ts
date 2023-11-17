@@ -27,11 +27,10 @@ export class PaymentMethodPageComponent {
     buyItem() {
       const dataToSend = {
         amount: 100,
-        merchantOrderId: 1000701293,
+        merchantOrderId: 10007063,
         merchantTimeStamp: this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
       };
 
-      //const selectedPaymentMethod = this.paymentForm.get('payment-method')?.value;
       const selectedPaymentMethod = this.paymentForm.value.paymentMethod;
 
       if (selectedPaymentMethod === 'cardpayment') {
