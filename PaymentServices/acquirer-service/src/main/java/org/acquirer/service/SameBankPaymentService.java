@@ -1,12 +1,12 @@
 package org.acquirer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.acquirer.dto.CardDetailsPaymentRequest;
-import org.acquirer.exception.BadRequestException;
-import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
 import org.acquirer.repository.BankAccountRepository;
+import org.sep.dto.card.CardDetails;
+import org.sep.exceptions.BadRequestException;
+import org.sep.exceptions.NotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class SameBankPaymentService {
     private final BankAccountRepository bankAccountRepository;
     private final TransactionDetailsService transactionDetailsService;
 
-    public void doPayment(Payment payment, CardDetailsPaymentRequest paymentRequest, BankAccount sellerBankAcc) {
+    public void doPayment(Payment payment, CardDetails paymentRequest, BankAccount sellerBankAcc) {
 
         validateCard(paymentRequest);
 
@@ -41,12 +41,12 @@ public class SameBankPaymentService {
         }
     }
 
-    private void validateCard(CardDetailsPaymentRequest paymentRequest) {
+    private void validateCard(CardDetails paymentRequest) {
         checkIfCardParametersAreCorrect(paymentRequest);
         validateCardExpirationDate(paymentRequest);
     }
 
-    private void validateCardExpirationDate(CardDetailsPaymentRequest paymentRequest) {
+    private void validateCardExpirationDate(CardDetails paymentRequest) {
         String[] date = paymentRequest.getCardExpiresIn().split("/");
         LocalDate expirationDate = LocalDate.of(Integer.parseInt("20" + date[1]),
                 Integer.parseInt(date[0]) + 1, 1).minusDays(1);
@@ -54,7 +54,7 @@ public class SameBankPaymentService {
         if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
     }
 
-    private void checkIfCardParametersAreCorrect(CardDetailsPaymentRequest paymentRequest) {
+    private void checkIfCardParametersAreCorrect(CardDetails paymentRequest) {
         BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
                 .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
 

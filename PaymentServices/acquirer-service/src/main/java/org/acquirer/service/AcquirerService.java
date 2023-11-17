@@ -2,13 +2,17 @@ package org.acquirer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.*;
-import org.acquirer.exception.BadRequestException;
-import org.acquirer.exception.NotFoundException;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
-import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.BankAccountRepository;
 import org.acquirer.repository.PaymentRepository;
+import org.sep.dto.card.CardDetails;
+import org.sep.dto.card.IssuerBankPaymentResponse;
+import org.sep.dto.card.PaymentUrlAndIdRequest;
+import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.enums.PaymentStatus;
+import org.sep.exceptions.BadRequestException;
+import org.sep.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,7 +33,6 @@ public class AcquirerService {
     private final TransactionDetailsService transactionDetailsService;
 
     private static final String CARD_DETAILS_PAGE = "http://localhost:4200/acquirer-bank/card-details";
-    private static final String NO_PAYMENT_PAGE = "http://localhost:4200/acquirer-bank/no-payment-page";
     private static final int PAYMENT_LINK_DURATION_MINUTES = 15;
 
     public String pingPcc() {
@@ -54,7 +57,7 @@ public class AcquirerService {
     }
 
 
-    public PaymentResultResponse cardDetailsPayment(CardDetailsPaymentRequest paymentRequest) {
+    public PaymentResultResponse cardDetailsPayment(CardDetails paymentRequest) {
 
         Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
                 .orElseThrow(() -> new NotFoundException("Payment doesn't exist!")); // todo: default error page?
@@ -78,7 +81,7 @@ public class AcquirerService {
         return new PaymentResultResponse(payment.getSuccessUrl());
     }
 
-    private boolean isAccountsInTheSameBank(CardDetailsPaymentRequest paymentRequest, BankAccount sellerBankAcc) {
+    private boolean isAccountsInTheSameBank(CardDetails paymentRequest, BankAccount sellerBankAcc) {
         return paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0);
     }
 
@@ -98,7 +101,7 @@ public class AcquirerService {
     }
 
 
-    private void validatePayment(CardDetailsPaymentRequest paymentRequest, Payment payment) {
+    private void validatePayment(CardDetails paymentRequest, Payment payment) {
         if (payment.getStatus() != PaymentStatus.IN_PROGRESS) {
             throw new BadRequestException("Payment status is not in progress!");
         }
