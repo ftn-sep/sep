@@ -1,0 +1,43 @@
+<div class="wrapper">
+<div class="iphone">
+    <header class="header">
+      <h1>Payment Method</h1>
+    </header>
+  
+    <form [formGroup]="paymentForm" (ngSubmit)="buyItem()" class="form">
+
+      <fieldset>
+        
+  
+        <div class="form__radios">
+            <div class="form__radio">
+                <label for="cardpayment">
+                  <i class="fa-solid fa-credit-card" style="color: #5585d8;"></i>
+                  Card Payment</label>
+                <input checked id="cardpayment" value="cardpayment" formControlName="paymentMethod" type="radio" />
+            </div>
+
+          <div class="form__radio">
+            <label for="qr"><i class="fa-solid fa-qrcode" style="color: #000000;"></i>QR Payment</label>
+            <input id="qr" formControlName="paymentMethod" value="qr" type="radio" />
+          </div>
+  
+          <div class="form__radio">
+            <label for="paypal"><i class="fa-brands fa-paypal" style="color: #005eff;"></i>PayPal</label>
+            <input id="paypal" formControlName="paymentMethod" value="paypal" type="radio" />
+          </div>
+
+          <div class="form__radio">
+            <label for="bitcoin"><i class="fa-brands fa-bitcoin" style="color: #ffd700;"></i>Bitcoin</label>
+            <input id="bitcoin" formControlName="paymentMethod" value="bitcoin" type="radio" />
+          </div>
+        </div>
+      </fieldset>
+  
+      <div>
+        <button class="button button--full" type="submit"><i class="fa-solid fa-cart-shopping"></i>
+          Buy Now</button>
+      </div>
+    </form>
+  </div>
+</div>
