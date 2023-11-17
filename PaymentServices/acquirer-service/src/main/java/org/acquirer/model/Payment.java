@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.acquirer.dto.PaymentUrlAndIdRequest;
-import org.acquirer.model.enums.PaymentStatus;
+import org.sep.dto.card.PaymentUrlAndIdRequest;
+import org.sep.enums.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

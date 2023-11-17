@@ -2,15 +2,15 @@ package org.acquirer.service;
 
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
-import org.acquirer.dto.IssuerBankPaymentResponse;
-import org.acquirer.dto.TransactionDetails;
-import org.acquirer.exception.BadRequestException;
-import org.acquirer.exception.ErrorPaymentException;
-import org.acquirer.exception.FailedPaymentException;
 import org.acquirer.model.Payment;
-import org.acquirer.model.enums.PaymentStatus;
 import org.acquirer.repository.PaymentRepository;
 import org.apache.http.HttpHeaders;
+import org.sep.dto.card.IssuerBankPaymentResponse;
+import org.sep.dto.card.TransactionDetails;
+import org.sep.enums.PaymentStatus;
+import org.sep.exceptions.BadRequestException;
+import org.sep.exceptions.ErrorPaymentException;
+import org.sep.exceptions.FailedPaymentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,14 +39,14 @@ public class TransactionDetailsService {
         throw new ErrorPaymentException(payment.getErrorUrl());
     }
 
-    private void changeStatus(PaymentStatus status, Payment payment) {
-        payment.setStatus(status);
-        paymentRepository.save(payment);
-    }
-
     public void onSuccessPayment(Payment payment, IssuerBankPaymentResponse issuerBankResponse) {
         changeStatus(PaymentStatus.DONE, payment);
         sendTransactionDetailsToPsp(payment, issuerBankResponse);
+    }
+
+    private void changeStatus(PaymentStatus status, Payment payment) {
+        payment.setStatus(status);
+        paymentRepository.save(payment);
     }
 
     private void sendTransactionDetailsToPsp(Payment payment, IssuerBankPaymentResponse issuerBankResponse) {

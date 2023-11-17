@@ -1,10 +1,10 @@
 package org.acquirer.controller;
 
-import org.acquirer.dto.CardDetailsPaymentRequest;
 import org.acquirer.dto.PaymentResultResponse;
-import org.acquirer.dto.PaymentUrlAndIdRequest;
-import org.acquirer.dto.PaymentUrlIdResponse;
 import org.acquirer.service.AcquirerService;
+import org.sep.dto.card.CardDetails;
+import org.sep.dto.card.PaymentUrlAndIdRequest;
+import org.sep.dto.card.PaymentUrlIdResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class AcquirerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> cardDetailsPayment(@RequestBody CardDetailsPaymentRequest paymentRequest) {
+    public ResponseEntity<?> cardDetailsPayment(@RequestBody CardDetails paymentRequest) {
 
         PaymentResultResponse paymentResult = acquirerService.cardDetailsPayment(paymentRequest);
 
