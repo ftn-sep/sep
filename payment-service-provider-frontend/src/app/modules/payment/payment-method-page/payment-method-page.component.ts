@@ -26,8 +26,8 @@ export class PaymentMethodPageComponent {
 
     buyItem() {
       const dataToSend = {
-        amount: 100,
-        merchantOrderId: 10007063,
+        amount: 10,
+        merchantOrderId: 1000372334,
         merchantTimeStamp: this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
       };
 

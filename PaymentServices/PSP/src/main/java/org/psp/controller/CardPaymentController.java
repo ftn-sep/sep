@@ -1,5 +1,6 @@
 package org.psp.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.psp.service.CardPaymentService;
 import org.sep.dto.PaymentRequestFromClient;
@@ -23,7 +24,7 @@ public class CardPaymentController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> cardPayment(@RequestBody PaymentRequestFromClient paymentRequest) {
+    public ResponseEntity<?> cardPayment(@Valid @RequestBody PaymentRequestFromClient paymentRequest) {
         PaymentUrlIdResponse paymentUrlIdResponse = cardPaymentService.sendRequestForPaymentUrl(paymentRequest);
         return new ResponseEntity<>(paymentUrlIdResponse, HttpStatus.OK);
     }

@@ -12,6 +12,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SuccessPageComponent } from './modules/payment/success-page/success-page.component';
 import { ErrorPageComponent } from './modules/payment/error-page/error-page.component';
 import { FailedPageComponent } from './modules/payment/failed-page/failed-page.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,13 @@ import { FailedPageComponent } from './modules/payment/failed-page/failed-page.c
     HttpClientModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [
     DatePipe 
