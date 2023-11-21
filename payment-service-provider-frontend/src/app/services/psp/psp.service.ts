@@ -22,7 +22,12 @@ export class PspService {
   }
 
   bitcoinPayment(paymentRequest: any) {
-    return this.http.get(this.apiHost + 'api/psp/ping-crypto');
+    return this.http.get(this.apiHost + 'api/psp/ping-crypto', {
+        headers: new HttpHeaders({
+          'Accept': 'text/html',
+        }),
+        responseType: 'text'
+      });
   }
 
   qrPayment(paymentRequest: any) {

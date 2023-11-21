@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { PspService } from 'src/app/services/psp/psp.service';
 
 @Component({
@@ -18,7 +19,8 @@ export class PaymentMethodPageComponent implements OnInit {
     private datePipe: DatePipe,
     private router: Router,
     private route: ActivatedRoute,
-    private formbuilder: FormBuilder)
+    private formbuilder: FormBuilder,
+    private toastr: ToastrService)
   {
       this.paymentForm = this.formbuilder.group({
         paymentMethod: ['']
@@ -68,7 +70,7 @@ export class PaymentMethodPageComponent implements OnInit {
   bitcoinPayment() {
     this.pspService.bitcoinPayment(this.dataFromMerchant).subscribe({
       next: (res: any) => {
-        console.log(res);
+        this.toastr.success(res);
       },
       error: (err: any) => {
         console.log(err);
