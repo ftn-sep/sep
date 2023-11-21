@@ -32,16 +32,18 @@ public class ExceptionResolver {
 
     @ExceptionHandler(FailedPaymentException.class)
     public ResponseEntity<?> failedPaymentException(FailedPaymentException exception) {
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(exception.getMessage()))
-                .build();
+        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.OK);
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .location(URI.create(exception.getMessage()))
+//                .build();
     }
 
     @ExceptionHandler(ErrorPaymentException.class)
     public ResponseEntity<?> errorPaymentException(ErrorPaymentException exception) {
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(exception.getMessage()))
-                .build();
+        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.OK);
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .location(URI.create(exception.getMessage()))
+//                .build();
     }
 
 }

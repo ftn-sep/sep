@@ -3,8 +3,10 @@ package org.acquirer.service;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.*;
 import org.acquirer.model.BankAccount;
+import org.acquirer.model.BankBin;
 import org.acquirer.model.Payment;
 import org.acquirer.repository.BankAccountRepository;
+import org.acquirer.repository.BankBinRepository;
 import org.acquirer.repository.PaymentRepository;
 import org.sep.dto.card.CardDetails;
 import org.sep.dto.card.IssuerBankPaymentResponse;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,9 +34,12 @@ public class AcquirerService {
     private final SameBankPaymentService sameBankPaymentService;
     private final TwoBanksPaymentService twoBanksPaymentService;
     private final TransactionDetailsService transactionDetailsService;
+    private final BankBinRepository bankBinRepository;
 
     private static final String CARD_DETAILS_PAGE = "http://localhost:4200/acquirer-bank/card-details";
     private static final int PAYMENT_LINK_DURATION_MINUTES = 15;
+    private static final int PAN_BIN_LENGTH = 6;
+
 
     public String pingPcc() {
         return webClientBuilder.build().get()
@@ -60,7 +66,7 @@ public class AcquirerService {
     public PaymentResultResponse cardDetailsPayment(CardDetails paymentRequest) {
 
         Payment payment = paymentRepository.findById(paymentRequest.getPaymentId())
-                .orElseThrow(() -> new NotFoundException("Payment doesn't exist!")); // todo: default error page?
+                .orElseThrow(() -> new NotFoundException("Payment doesn't exist!"));
 
         validatePayment(paymentRequest, payment);
 
@@ -70,7 +76,7 @@ public class AcquirerService {
 
         IssuerBankPaymentResponse issuerBankResponse = null;
 
-        if (isAccountsInTheSameBank(paymentRequest, sellerBankAcc)) {
+        if (isAccountsInTheSameBank(paymentRequest)) {
             sameBankPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
         } else {
             issuerBankResponse = twoBanksPaymentService.doPayment(payment, paymentRequest, sellerBankAcc);
@@ -81,8 +87,10 @@ public class AcquirerService {
         return new PaymentResultResponse(payment.getSuccessUrl());
     }
 
-    private boolean isAccountsInTheSameBank(CardDetails paymentRequest, BankAccount sellerBankAcc) {
-        return paymentRequest.getPan().charAt(0) == sellerBankAcc.getCard().getPan().charAt(0);
+    private boolean isAccountsInTheSameBank(CardDetails paymentRequest) {
+        String bin = paymentRequest.getPan().substring(0, PAN_BIN_LENGTH);
+        BankBin bankBin = bankBinRepository.findByBin(bin).orElse(null);
+        return bankBin != null;
     }
 
 

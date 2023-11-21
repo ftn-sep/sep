@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class SuccessPageComponent {
 
+  backToStore() {
+    window.location.href = 'http://localhost:4201/'
+  }
 }

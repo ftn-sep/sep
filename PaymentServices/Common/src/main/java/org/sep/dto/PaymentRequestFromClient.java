@@ -25,7 +25,6 @@ public class PaymentRequestFromClient {
     private Long merchantOrderId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Past
     private LocalDateTime merchantTimeStamp;
 
 }

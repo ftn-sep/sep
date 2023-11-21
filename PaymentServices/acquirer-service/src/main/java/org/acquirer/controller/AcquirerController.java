@@ -1,5 +1,6 @@
 package org.acquirer.controller;
 
+import jakarta.validation.Valid;
 import org.acquirer.dto.PaymentResultResponse;
 import org.acquirer.service.AcquirerService;
 import org.sep.dto.card.CardDetails;
@@ -50,11 +51,11 @@ public class AcquirerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> cardDetailsPayment(@RequestBody CardDetails paymentRequest) {
+    public ResponseEntity<?> cardDetailsPayment(@Valid @RequestBody CardDetails paymentRequest) {
 
         PaymentResultResponse paymentResult = acquirerService.cardDetailsPayment(paymentRequest);
 
-        return new ResponseEntity<>(paymentResult.getRedirectUrl(), HttpStatus.OK);
+        return new ResponseEntity<>(URI.create(paymentResult.getRedirectUrl()), HttpStatus.OK);
 
         // da li redirektovati odavde ili sa fronta ??
 //        return ResponseEntity.status(HttpStatus.FOUND)

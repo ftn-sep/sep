@@ -1,6 +1,7 @@
 package org.sep.dto.card;
 
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class CardDetails {
     private String pan;
     @Digits(integer = 3, fraction = 0, message = "Wrong security code.")
     private Integer securityCode;
-    @NotNull(message = "Enter card holder name.")
+    @NotEmpty(message = "Enter card holder name.")
     private String cardHolderName;
     @Pattern(regexp = "\\d{2}/\\d{2}")
     private String cardExpiresIn;
