@@ -1,5 +1,6 @@
 package org.acquirer.service;
 
+import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.Payment;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 @Service
@@ -23,10 +25,14 @@ public class SameBankPaymentService {
 
     public void doPayment(Payment payment, CardDetails paymentRequest, BankAccount sellerBankAcc) {
 
-        validateCard(paymentRequest);
+        String sha512pan = Hashing.sha512()
+                .hashString(paymentRequest.getPan(), StandardCharsets.UTF_8)
+                .toString();
 
-        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
-                .orElseThrow(() -> new NotFoundException("Customer card doesn't exist in acquirer's bank!"));
+        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(sha512pan)
+                .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
+
+        validateCard(paymentRequest, customerBankAcc);
 
         payment.setIssuerAccountNumber(customerBankAcc.getAccountNumber());
 
@@ -41,8 +47,8 @@ public class SameBankPaymentService {
         }
     }
 
-    private void validateCard(CardDetails paymentRequest) {
-        checkIfCardParametersAreCorrect(paymentRequest);
+    private void validateCard(CardDetails paymentRequest, BankAccount customerBankAcc) {
+        checkIfCardParametersAreCorrect(paymentRequest, customerBankAcc);
         validateCardExpirationDate(paymentRequest);
     }
 
@@ -54,13 +60,10 @@ public class SameBankPaymentService {
         if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
     }
 
-    private void checkIfCardParametersAreCorrect(CardDetails paymentRequest) {
-        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getPan())
-                .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
+    private void checkIfCardParametersAreCorrect(CardDetails paymentRequest, BankAccount customerBankAcc) {
+        BCryptPasswordEncoder bCryptEnc = new BCryptPasswordEncoder();
 
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
-        if (!bCryptPasswordEncoder.matches(paymentRequest.getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode())) {
+        if (!bCryptEnc.matches(paymentRequest.getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode())) {
             throw new BadRequestException("Something went wrong, try again!");
         }
 

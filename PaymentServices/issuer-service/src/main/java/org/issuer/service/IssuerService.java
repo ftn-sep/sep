@@ -1,5 +1,6 @@
 package org.issuer.service;
 
+import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import org.issuer.model.Payment;
 import org.issuer.repository.BankAccountRepository;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,10 +30,14 @@ public class IssuerService {
 
     public IssuerBankPaymentResponse cardPayment(AcquirerToIssuerPaymentRequest paymentRequest) {
 
-        validateCard(paymentRequest);
+        String sha512pan = Hashing.sha512()
+                .hashString(paymentRequest.getCardDetails().getPan(), StandardCharsets.UTF_8)
+                .toString();
 
-        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getCardDetails().getPan())
-                .orElseThrow(() -> new NotFoundException("Customer card doesn't exist !"));
+        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(sha512pan)
+                .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
+
+        validateCard(paymentRequest, customerBankAcc);
 
         IssuerBankPaymentResponse issuerBankPaymentResponse = buildIssuerBankPaymentResponse(customerBankAcc, paymentRequest);
 
@@ -80,8 +86,8 @@ public class IssuerService {
         return ThreadLocalRandom.current().nextLong(1000000000);
     }
 
-    private void validateCard(AcquirerToIssuerPaymentRequest paymentRequest) {
-        checkIfAllParametersAreSame(paymentRequest);
+    private void validateCard(AcquirerToIssuerPaymentRequest paymentRequest, BankAccount customerBankAcc) {
+        checkIfAllParametersAreSame(paymentRequest, customerBankAcc);
         validateCardExpirationDate(paymentRequest);
     }
 
@@ -93,10 +99,7 @@ public class IssuerService {
         if (expirationDate.isBefore(LocalDate.now())) throw new BadRequestException("Card is expired!");
     }
 
-    private void checkIfAllParametersAreSame(AcquirerToIssuerPaymentRequest paymentRequest) {
-        BankAccount customerBankAcc = bankAccountRepository.findByCardPan(paymentRequest.getCardDetails().getPan())
-                .orElseThrow(() -> new NotFoundException("Something went wrong, try again!"));
-
+    private void checkIfAllParametersAreSame(AcquirerToIssuerPaymentRequest paymentRequest, BankAccount customerBankAcc) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
         if (!bCryptPasswordEncoder.matches(paymentRequest.getCardDetails().getSecurityCode().toString(), customerBankAcc.getCard().getSecurityCode())) {

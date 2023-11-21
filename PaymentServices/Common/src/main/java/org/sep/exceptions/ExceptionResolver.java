@@ -32,7 +32,7 @@ public class ExceptionResolver {
 
     @ExceptionHandler(FailedPaymentException.class)
     public ResponseEntity<?> failedPaymentException(FailedPaymentException exception) {
-        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.FOUND);
+        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.OK);
 //        return ResponseEntity.status(HttpStatus.FOUND)
 //                .location(URI.create(exception.getMessage()))
 //                .build();
@@ -40,7 +40,7 @@ public class ExceptionResolver {
 
     @ExceptionHandler(ErrorPaymentException.class)
     public ResponseEntity<?> errorPaymentException(ErrorPaymentException exception) {
-        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.FOUND);
+        return new ResponseEntity<>(URI.create(exception.getMessage()), HttpStatus.OK);
 //        return ResponseEntity.status(HttpStatus.FOUND)
 //                .location(URI.create(exception.getMessage()))
 //                .build();

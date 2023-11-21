@@ -17,7 +17,7 @@ public class CardDetails {
     private String uuid;
     @Digits(integer = 10, fraction = 0)
     private Long paymentId;
-    //@CreditCardNumber(message = "Enter valid card number.")
+    @CreditCardNumber(message = "Enter valid card number.")
     private String pan;
     @Digits(integer = 3, fraction = 0, message = "Wrong security code.")
     private Integer securityCode;

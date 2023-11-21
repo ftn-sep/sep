@@ -1,8 +1,7 @@
-import { state } from '@angular/animations';
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PspService } from 'src/app/services/psp/psp.service';
 
 @Component({
@@ -10,52 +9,93 @@ import { PspService } from 'src/app/services/psp/psp.service';
   templateUrl: './payment-method-page.component.html',
   styleUrls: ['./payment-method-page.component.css']
 })
-export class PaymentMethodPageComponent {
+export class PaymentMethodPageComponent implements OnInit {
 
   paymentForm: FormGroup;
+  dataFromMerchant: any = {};
 
   constructor(private pspService: PspService,
     private datePipe: DatePipe,
     private router: Router,
-    private formbuilder: FormBuilder) {
+    private route: ActivatedRoute,
+    private formbuilder: FormBuilder)
+  {
       this.paymentForm = this.formbuilder.group({
         paymentMethod: ['']
       })
-     }
-
-
-    buyItem() {
-      const dataToSend = {
-        amount: 10,
-        merchantOrderId: 1000372334,
-        merchantTimeStamp: this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
-      };
-
-      const selectedPaymentMethod = this.paymentForm.value.paymentMethod;
-
-      if (selectedPaymentMethod === 'cardpayment') {
-        this.pspService.generateUrl(dataToSend)
-        .subscribe(
-          response => {
-            if (response && response.paymentUrl) {
-            const parsedUrl = new URL(response.paymentUrl);
-            const path = parsedUrl.pathname;
+  }
   
-            this.router.navigate([path], {state: {amount: response.amount}})
-            }
-          },
-          error => {
-          }
-        ); 
-      } else if (selectedPaymentMethod === 'qr') {
-        // todo
-      } else if (selectedPaymentMethod === 'paypal') {
-        // todo
-      } else if (selectedPaymentMethod === 'bitcoin') {
-        // todo
-      } else {
-        console.log('Molimo odaberite način plaćanja.');
-      }
+  ngOnInit() {
+    this.dataFromMerchant.amount = this.route.snapshot.queryParamMap.get('amount');
+    this.dataFromMerchant.merchantOrderId = this.route.snapshot.queryParamMap.get('merchantOrderId');
+    this.dataFromMerchant.merchantTimeStamp = this.route.snapshot.queryParamMap.get('merchantTimestamp');
+  }
+
+  buyItem() {
+    const selectedPaymentMethod = this.paymentForm.value.paymentMethod;
+
+    if (selectedPaymentMethod === 'cardpayment') {
+      this.cardPayment();
+    } else if (selectedPaymentMethod === 'qr') {
+      this.qrPayment();
+    } else if (selectedPaymentMethod === 'paypal') {
+      this.paypalPayment();
+    } else if (selectedPaymentMethod === 'bitcoin') {
+      this.bitcoinPayment();
+    } else {
+      console.log('Molimo odaberite način plaćanja.');
     }
+  }
+
+  cardPayment() {
+    this.pspService.generateUrl(this.dataFromMerchant).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        
+        if (response && response.paymentUrl) {
+          const parsedUrl = new URL(response.paymentUrl);
+          const path = parsedUrl.pathname;
+
+          this.router.navigate([path], {state: {amount: response.amount}})
+        }
+      },
+      error: (error:any) => {
+        console.log(error);
+      }
+    });
+  }
+
+  bitcoinPayment() {
+    this.pspService.bitcoinPayment(this.dataFromMerchant).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    });
+  }
+
+  paypalPayment() {
+    this.pspService.paypalPayment(this.dataFromMerchant).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    })
+  }
+  
+  qrPayment() {
+    // this.pspService.qrPayment(this.dataFromMerchant).subscribe({
+    //   next: (res: any) => {
+    //     console.log(res);
+    //   },
+    //   error: (err: any) => {
+    //     console.log(err);
+    //   }
+    // })
+  }
 
 }

@@ -1,25 +1,38 @@
-@import url(https://fonts.googleapis.com/css?family=Raleway:400,700,600);
-.container{
-  padding: 20px;
+body{margin-top:20px;}
+.cover-background {
+    position: relative !important;
+    background-size: cover !important;
+    overflow: hidden !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
-body{
-  background-color: #f6f4f4;
-  font-family: 'Raleway', sans-serif;
+.p-0 {
+    padding: 0!important;
 }
-.teal{
-  background-color: #ffc952 !important;
-  color: #444444 !important;
+section {
+    padding: 120px 0;
+    overflow: hidden;
+    background: #fff;
 }
-a{
-  color: #47b8e0 !important;
+
+.error-page {
+    background-color: #BABABA4A;
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(234,234,235,0.2);
+    padding: 80px 20px;
 }
-.message{
-  text-align: left;
+.text-center {
+    text-align: center!important;
 }
-.price1{
-	font-size: 40px;
-	font-weight: 200;
-	display: block;
-	text-align: center;
+.error-page h1 {
+    font-size: 200px;
+    line-height: 1;
+    font-weight: 600;
 }
-.ui.message p {margin: 5px;}
+.text-secondary {
+    color: #15395A !important;
+}
+.mb-4 {
+    margin-bottom: 1.5rem!important;
+}
