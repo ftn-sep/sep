@@ -7,10 +7,14 @@ import org.paypal.model.PaypalPayment;
 import org.paypal.repository.PaypalPaymentRepository;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.dto.card.TransactionDetails;
+import org.sep.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,6 +26,9 @@ import java.util.List;
 
 @Service
 public class PaypalService {
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
 
     private HttpClient httpClient;
     @Autowired
@@ -95,16 +102,19 @@ public class PaypalService {
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         var content = response.body();
         var orderResponse = objectMapper.readValue(content, OrderResponseDTO.class);
-        saveOrder(orderResponse, order);
-        PaymentUrlIdResponse paymentUrlIdResponse = new PaymentUrlIdResponse(orderResponse.getLinks().get(1).getHref(), paypalPaymentRepository.findByPaypalOrderId(orderResponse.getId()).getId(), paymentInfo.getAmount());
+        saveOrder(orderResponse, order, paymentInfo);
+        PaymentUrlIdResponse paymentUrlIdResponse = new PaymentUrlIdResponse(orderResponse.getLinks().get(1).getHref(),
+                paypalPaymentRepository.findByPaypalOrderId(orderResponse.getId()).getId(), paymentInfo.getAmount());
+
         return paymentUrlIdResponse;
     }
 
-    public void saveOrder(OrderResponseDTO orderResponseDTO, OrderDTO orderDTO){
+    public void saveOrder(OrderResponseDTO orderResponseDTO, OrderDTO orderDTO, PaymentUrlAndIdRequest paymentInfo) {
         var payment = new PaypalPayment();
         payment.setPaypalOrderId(orderResponseDTO.getId());
         payment.setAmount(Double.parseDouble(orderDTO.getPurchaseUnits().get(0).getAmount().getValue()));
         payment.setPaypalOrderStatus(orderResponseDTO.getStatus().toString());
+        payment.setMerchantOrderId(paymentInfo.getMerchantOrderId());
         paypalPaymentRepository.save(payment);
     }
 
@@ -112,7 +122,7 @@ public class PaypalService {
         var accessTokenDto = getAccessToken();
         var payment = paypalPaymentRepository.findByPaypalOrderId(paymentId);
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(paypalConfig.getBaseUrl() + "/v2/checkout/orders/"+paymentId+"/capture"))
+                .uri(URI.create(paypalConfig.getBaseUrl() + "/v2/checkout/orders/" + paymentId + "/capture"))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenDto.getAccessToken())
                 .POST(HttpRequest.BodyPublishers.noBody())
@@ -120,6 +130,21 @@ public class PaypalService {
         httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         payment.setPaypalOrderStatus(OrderStatus.COMPLETED.toString());
         paypalPaymentRepository.save(payment);
+        sendTransactionDetailsToPsp(payment);
+    }
+
+    private void sendTransactionDetailsToPsp(PaypalPayment payment) {
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .merchantOrderId(payment.getMerchantOrderId())
+                .paymentId(payment.getId())
+                .paymentStatus(PaymentStatus.DONE)  // todo: da li ce uvek biti uspesno?
+                .build();
+
+        webClientBuilder.build().post()
+                .uri("http://psp-service/api/psp/transaction-details")
+                .header(org.apache.http.HttpHeaders.CONTENT_TYPE, jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                .body(Mono.just(transactionDetails), TransactionDetails.class)
+                .exchange().toFuture();
     }
 
     private String encodeBasicCredentials() {

@@ -89,7 +89,7 @@ public class CardPaymentService {
 
     public void updatePaymentDetails(TransactionDetails transactionDetails) {
 
-        Payment payment = paymentRepository.findByPaymentId(transactionDetails.getPaymentId())
+        Payment payment = paymentRepository.findByMerchantOrderId(transactionDetails.getMerchantOrderId())
                 .orElseThrow(() -> new NotFoundException("Payment doesn't exist!"));
 
         payment.setPaymentStatus(transactionDetails.getPaymentStatus());

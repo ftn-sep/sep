@@ -33,7 +33,7 @@ public class Payment {
     @Enumerated
     private PaymentStatus paymentStatus;
 
-    @Column(nullable = false)
+    @Column
     private Long paymentId;
 
     @Column
