@@ -8,29 +8,32 @@ import { PspService } from 'src/app/services/psp/psp.service';
 @Component({
   selector: 'app-payment-method-page',
   templateUrl: './payment-method-page.component.html',
-  styleUrls: ['./payment-method-page.component.css']
+  styleUrls: ['./payment-method-page.component.css'],
 })
 export class PaymentMethodPageComponent implements OnInit {
-
   paymentForm: FormGroup;
   dataFromMerchant: any = {};
 
-  constructor(private pspService: PspService,
+  constructor(
+    private pspService: PspService,
     private datePipe: DatePipe,
     private router: Router,
     private route: ActivatedRoute,
     private formbuilder: FormBuilder,
-    private toastr: ToastrService)
-  {
-      this.paymentForm = this.formbuilder.group({
-        paymentMethod: ['']
-      })
+    private toastr: ToastrService
+  ) {
+    this.paymentForm = this.formbuilder.group({
+      paymentMethod: [''],
+    });
   }
-  
+
   ngOnInit() {
-    this.dataFromMerchant.amount = this.route.snapshot.queryParamMap.get('amount');
-    this.dataFromMerchant.merchantOrderId = this.route.snapshot.queryParamMap.get('merchantOrderId');
-    this.dataFromMerchant.merchantTimeStamp = this.route.snapshot.queryParamMap.get('merchantTimestamp');
+    this.dataFromMerchant.amount =
+      this.route.snapshot.queryParamMap.get('amount');
+    this.dataFromMerchant.merchantOrderId =
+      this.route.snapshot.queryParamMap.get('merchantOrderId');
+    this.dataFromMerchant.merchantTimeStamp =
+      this.route.snapshot.queryParamMap.get('merchantTimestamp');
   }
 
   buyItem() {
@@ -53,17 +56,17 @@ export class PaymentMethodPageComponent implements OnInit {
     this.pspService.generateUrl(this.dataFromMerchant).subscribe({
       next: (response: any) => {
         console.log(response);
-        
+
         if (response && response.paymentUrl) {
           const parsedUrl = new URL(response.paymentUrl);
           const path = parsedUrl.pathname;
 
-          this.router.navigate([path], {state: {amount: response.amount}})
+          this.router.navigate([path], { state: { amount: response.amount } });
         }
       },
-      error: (error:any) => {
+      error: (error: any) => {
         console.log(error);
-      }
+      },
     });
   }
 
@@ -74,21 +77,21 @@ export class PaymentMethodPageComponent implements OnInit {
       },
       error: (err: any) => {
         console.log(err);
-      }
+      },
     });
   }
 
   paypalPayment() {
     this.pspService.paypalPayment(this.dataFromMerchant).subscribe({
       next: (res: any) => {
-        console.log(res);
+        window.location.replace(res.paymentUrl);
       },
       error: (err: any) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
-  
+
   qrPayment() {
     // this.pspService.qrPayment(this.dataFromMerchant).subscribe({
     //   next: (res: any) => {
@@ -99,5 +102,4 @@ export class PaymentMethodPageComponent implements OnInit {
     //   }
     // })
   }
-
 }

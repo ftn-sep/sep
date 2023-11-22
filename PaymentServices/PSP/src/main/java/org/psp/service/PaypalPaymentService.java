@@ -4,13 +4,10 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.psp.model.Payment;
-import org.psp.model.Seller;
 import org.psp.repository.PaymentRepository;
-import org.psp.repository.SellerRepository;
 import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
-import org.sep.dto.card.TransactionDetails;
 import org.sep.enums.PaymentStatus;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
@@ -23,40 +20,18 @@ import reactor.core.publisher.Mono;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CardPaymentService {
-
+public class PaypalPaymentService {
 
     private final WebClient.Builder webClientBuilder;
     private final PaymentRepository paymentRepository;
-    private final SellerRepository sellerRepository;
 
     private static final String SUCCESS_URL = "http://localhost:4200/success-payment";
     private static final String FAILED_URL = "http://localhost:4200/failed-payment";
     private static final String ERROR_URL = "http://localhost:4200/error-payment";
 
-
-    private void savePayment(PaymentRequestFromClient paymentRequest, Long paymentId) {
-        Payment payment = Payment.builder()
-                .merchantOrderId(paymentRequest.getMerchantOrderId())
-                .amount(paymentRequest.getAmount())
-                .merchantTimeStamp(paymentRequest.getMerchantTimeStamp())
-                .paymentStatus(PaymentStatus.IN_PROGRESS)
-                .paymentId(paymentId)
-                .build();
-
-        paymentRepository.save(payment);
-    }
-
-    public PaymentUrlIdResponse sendRequestForPaymentUrl(PaymentRequestFromClient paymentRequest) {
-
-        Long sellerId = Long.valueOf(paymentRequest.getMerchantOrderId().toString().substring(0, 4));
-
-        Seller seller = sellerRepository.findBySellerId(sellerId)
-                .orElseThrow(() -> new NotFoundException("Seller doesn't exist!"));
+    public PaymentUrlIdResponse paypalPayment(PaymentRequestFromClient paymentRequest) {
 
         PaymentUrlAndIdRequest paymentReq = PaymentUrlAndIdRequest.builder()
-                .merchantId(seller.getMerchantId())
-                .merchantPassword(seller.getMerchantPassword())
                 .amount(paymentRequest.getAmount())
                 .merchantOrderId(paymentRequest.getMerchantOrderId())
                 .merchantTimestamp(paymentRequest.getMerchantTimeStamp())
@@ -66,14 +41,24 @@ public class CardPaymentService {
                 .build();
 
         PaymentUrlIdResponse paymentUrlAndId = getPaymentUrlAndId(paymentReq);
-        savePayment(paymentRequest, paymentUrlAndId.getPaymentId());
-
+        savePayment(paymentRequest);
         return paymentUrlAndId;
+    }
+
+    private void savePayment(PaymentRequestFromClient paymentRequest) {
+        Payment payment = Payment.builder()
+                .merchantOrderId(paymentRequest.getMerchantOrderId())
+                .amount(paymentRequest.getAmount())
+                .merchantTimeStamp(paymentRequest.getMerchantTimeStamp())
+                .paymentStatus(PaymentStatus.IN_PROGRESS)
+                .build();
+
+        paymentRepository.save(payment);
     }
 
     private PaymentUrlIdResponse getPaymentUrlAndId(PaymentUrlAndIdRequest paymentReq) {
         return webClientBuilder.build().post()
-                .uri("http://acquirer-service/api/acquirer/payment-url-request")
+                .uri("http://paypal-service/api/paypal/payment")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .body(Mono.just(paymentReq), PaymentUrlAndIdRequest.class)
                 .retrieve()
@@ -85,17 +70,5 @@ public class CardPaymentService {
 
                 .bodyToMono(PaymentUrlIdResponse.class)
                 .block();
-    }
-
-    public void updatePaymentDetails(TransactionDetails transactionDetails) {
-
-        Payment payment = paymentRepository.findByMerchantOrderId(transactionDetails.getMerchantOrderId())
-                .orElseThrow(() -> new NotFoundException("Payment doesn't exist!"));
-
-        payment.setPaymentStatus(transactionDetails.getPaymentStatus());
-        payment.setAcquirerTimestamp(transactionDetails.getAcquirerTimestamp());
-        payment.setAcquirerOrderId(transactionDetails.getAcquirerOrderId());
-
-        paymentRepository.save(payment);
     }
 }
