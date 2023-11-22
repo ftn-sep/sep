@@ -3,9 +3,12 @@ package org.psp.service;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.psp.model.Payment;
+import org.psp.repository.PaymentRepository;
 import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.enums.PaymentStatus;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ import reactor.core.publisher.Mono;
 public class PaypalPaymentService {
 
     private final WebClient.Builder webClientBuilder;
+    private final PaymentRepository paymentRepository;
+
     private static final String SUCCESS_URL = "http://localhost:4200/success-payment";
     private static final String FAILED_URL = "http://localhost:4200/failed-payment";
     private static final String ERROR_URL = "http://localhost:4200/error-payment";
@@ -35,7 +40,20 @@ public class PaypalPaymentService {
                 .failedUrl(FAILED_URL)
                 .build();
 
-        return  getPaymentUrlAndId(paymentReq);
+        PaymentUrlIdResponse paymentUrlAndId = getPaymentUrlAndId(paymentReq);
+        savePayment(paymentRequest);
+        return paymentUrlAndId;
+    }
+
+    private void savePayment(PaymentRequestFromClient paymentRequest) {
+        Payment payment = Payment.builder()
+                .merchantOrderId(paymentRequest.getMerchantOrderId())
+                .amount(paymentRequest.getAmount())
+                .merchantTimeStamp(paymentRequest.getMerchantTimeStamp())
+                .paymentStatus(PaymentStatus.IN_PROGRESS)
+                .build();
+
+        paymentRepository.save(payment);
     }
 
     private PaymentUrlIdResponse getPaymentUrlAndId(PaymentUrlAndIdRequest paymentReq) {

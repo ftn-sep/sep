@@ -27,4 +27,7 @@ public class PaypalPayment {
     @Column
     private double amount;
 
+    @Column
+    private Long merchantOrderId;
+
 }
