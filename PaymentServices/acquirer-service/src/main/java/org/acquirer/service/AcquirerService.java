@@ -28,7 +28,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AcquirerService {
 
-    private final WebClient.Builder webClientBuilder;
     private final BankAccountRepository bankAccountRepository;
     private final PaymentRepository paymentRepository;
     private final SameBankPaymentService sameBankPaymentService;
@@ -39,15 +38,6 @@ public class AcquirerService {
     private static final String CARD_DETAILS_PAGE = "http://localhost:4200/acquirer-bank/card-details";
     private static final int PAYMENT_LINK_DURATION_MINUTES = 15;
     private static final int PAN_BIN_LENGTH = 6;
-
-
-    public String pingPcc() {
-        return webClientBuilder.build().get()
-                .uri("http://pcc-service/api/pcc/card-payment")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
 
     public PaymentUrlIdResponse generatePaymentUrlAndId(PaymentUrlAndIdRequest paymentRequest) {
 
