@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CompletePayment {
-
     private Integer id;
     private Integer order_id;
     private String status;

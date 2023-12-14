@@ -10,7 +10,9 @@ import org.crypto.repository.PaymentRepository;
 import org.crypto.repository.WalletRepository;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.dto.card.TransactionDetails;
 import org.sep.enums.PaymentStatus;
+import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,8 @@ public class CryptoService {
 
     public PaymentUrlIdResponse pay(PaymentUrlAndIdRequest paymentRequest) {
 
-        // todo validation
+        validateRequest(paymentRequest);
+
         Payment payment = new Payment(UUID.randomUUID(), paymentRequest, PAYMENT_LINK_DURATION_MINUTES);
 
         Wallet sellerWallet = walletRepository.findByMerchantId(payment.getMerchantId())
@@ -64,7 +67,6 @@ public class CryptoService {
 
         return new PaymentUrlIdResponse(coinGateResponse.getPayment_url(), payment.getId(), payment.getAmount());
     }
-
     public PaymentResultResponse completePayment(CompletePayment completePaymentRequest) {
 
         Payment payment = paymentRepository.findPaymentByCoinGateOrderId(completePaymentRequest.getOrder_id().toString())
@@ -73,11 +75,24 @@ public class CryptoService {
         PaymentResultResponse paymentResultResponse = getPaymentResultResponse(completePaymentRequest, payment);
 
         paymentRepository.save(payment);
+        sendTransactionDetailsToPsp(payment);
 
         return paymentResultResponse;
 
     }
+    private void sendTransactionDetailsToPsp(Payment payment) {
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .merchantOrderId(payment.getMerchantOrderId())
+                .paymentId(payment.getId())
+                .paymentStatus(payment.getStatus())
+                .build();
 
+        webClientBuilder.build().post()
+                .uri("http://psp-service/api/psp/transaction-details")
+                .header(org.apache.http.HttpHeaders.CONTENT_TYPE, jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                .body(Mono.just(transactionDetails), TransactionDetails.class)
+                .exchange().toFuture();
+    }
     private static PaymentResultResponse getPaymentResultResponse(CompletePayment completePaymentRequest, Payment payment) {
         PaymentResultResponse paymentResultResponse = new PaymentResultResponse();
 
@@ -90,5 +105,12 @@ public class CryptoService {
         }
 
         return paymentResultResponse;
+    }
+
+    private void validateRequest(PaymentUrlAndIdRequest paymentRequest) {
+        Payment existingPayment = paymentRepository.findPaymentByMerchantOrderId(paymentRequest.getMerchantOrderId())
+                .orElse(null);
+
+        if (existingPayment != null) throw new BadRequestException("Payment process already in progress");
     }
 }
