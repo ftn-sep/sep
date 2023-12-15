@@ -2,9 +2,8 @@ package org.crypto.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.crypto.dto.CompletePayment;
-import org.crypto.dto.PaymentResultResponse;
-import org.crypto.service.CryptoService;
+import org.crypto.model.Payment;
+import org.crypto.service.PaymentService;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
 import org.springframework.http.HttpStatus;
@@ -12,15 +11,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @RestController
 @RequestMapping(value = "/api/crypto")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class CryptoController {
 
-    private final CryptoService cryptoService;
+    private final PaymentService cryptoService;
 
     @PostMapping(
             value = "/start-payment",
@@ -35,17 +32,13 @@ public class CryptoController {
 
     }
 
-    @PostMapping(
-            value = "/complete-payment",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+    @GetMapping(
+            value = "/get-payments",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> completePayment(@RequestBody CompletePayment completePaymentRequest) {
-
-        PaymentResultResponse paymentResult = cryptoService.completePayment(completePaymentRequest);
-
-        return new ResponseEntity<>(URI.create(paymentResult.getRedirectUrl()), HttpStatus.OK);
-
+    public ResponseEntity<?> getPayments(){
+        cryptoService.completePayment();
+        return new ResponseEntity<>(new Payment(), HttpStatus.OK);
     }
 
 

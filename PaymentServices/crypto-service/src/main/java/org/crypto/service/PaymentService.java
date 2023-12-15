@@ -1,9 +1,9 @@
 package org.crypto.service;
 
+import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
-import org.crypto.dto.CompletePayment;
-import org.crypto.dto.PaymentResultResponse;
-import org.crypto.model.CoingateOrder;
+import org.crypto.dto.OrderResponse;
+import org.crypto.dto.CoingateOrder;
 import org.crypto.model.Payment;
 import org.crypto.model.Wallet;
 import org.crypto.repository.PaymentRepository;
@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CryptoService {
+public class PaymentService {
 
     private final WebClient.Builder webClientBuilder;
     private final PaymentRepository paymentRepository;
@@ -50,6 +50,7 @@ public class CryptoService {
                 .cancel_url(payment.getFailedUrl())
                 .success_url(payment.getSuccessUrl())
                 .callback_url("http://localhost:8083/api/crypto/complete-payment")
+                .callback_url(payment.getSuccessUrl())
                 .token(payment.getUuid())
                 .build();
 
@@ -62,24 +63,37 @@ public class CryptoService {
                 .block();
 
 
-        payment.setCoinGateOrderId(coinGateResponse.getOrder_id());
+        payment.setCoinGateOrderId(coinGateResponse.getId());
         paymentRepository.save(payment);
 
         return new PaymentUrlIdResponse(coinGateResponse.getPayment_url(), payment.getId(), payment.getAmount());
     }
-    public PaymentResultResponse completePayment(CompletePayment completePaymentRequest) {
 
-        Payment payment = paymentRepository.findPaymentByCoinGateOrderId(completePaymentRequest.getOrder_id().toString())
-                .orElseThrow(() -> new NotFoundException("Payment doesn't exist !"));
+    public void completePayment() {
 
-        PaymentResultResponse paymentResultResponse = getPaymentResultResponse(completePaymentRequest, payment);
+        List<Payment> unfinishedPayments = paymentRepository.findAllByStatus(PaymentStatus.IN_PROGRESS)
+                .orElseThrow(() -> new NotFoundException("There are no payments that are in progress !"));
 
-        paymentRepository.save(payment);
-        sendTransactionDetailsToPsp(payment);
+        for (Payment unfinishedPayment: unfinishedPayments) {
 
-        return paymentResultResponse;
+            OrderResponse coinGateResponse = webClientBuilder.build().get()
+                    .uri(COINGATE_URL + "/" + unfinishedPayment.getCoinGateOrderId())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + "1Yruy3kfXeReR8VjnFrVPEL2RbjFVYYZ2bz5Ziz4")
+                    .retrieve()
+                    .bodyToMono(OrderResponse.class)
+                    .block();
 
+            if(coinGateResponse.getStatus().equals("paid")) {
+                unfinishedPayment.setStatus(PaymentStatus.DONE);
+                paymentRepository.save(unfinishedPayment);
+            } else {
+                unfinishedPayment.setStatus(PaymentStatus.ERROR);
+                paymentRepository.save(unfinishedPayment);
+            }
+            sendTransactionDetailsToPsp(unfinishedPayment);
+        }
     }
+
     private void sendTransactionDetailsToPsp(Payment payment) {
         TransactionDetails transactionDetails = TransactionDetails.builder()
                 .merchantOrderId(payment.getMerchantOrderId())
@@ -88,23 +102,10 @@ public class CryptoService {
                 .build();
 
         webClientBuilder.build().post()
-                .uri("http://psp-service/api/psp/transaction-details")
-                .header(org.apache.http.HttpHeaders.CONTENT_TYPE, jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                .uri("http://localhost:8080/api/psp/transaction-details")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .body(Mono.just(transactionDetails), TransactionDetails.class)
                 .exchange().toFuture();
-    }
-    private static PaymentResultResponse getPaymentResultResponse(CompletePayment completePaymentRequest, Payment payment) {
-        PaymentResultResponse paymentResultResponse = new PaymentResultResponse();
-
-        if(Objects.equals(completePaymentRequest.getStatus(), "paid")){
-            payment.setStatus(PaymentStatus.DONE);
-            paymentResultResponse.setRedirectUrl(payment.getSuccessUrl());
-        } else {
-            payment.setStatus(PaymentStatus.FAILED);
-            paymentResultResponse.setRedirectUrl(payment.getFailedUrl());
-        }
-
-        return paymentResultResponse;
     }
 
     private void validateRequest(PaymentUrlAndIdRequest paymentRequest) {

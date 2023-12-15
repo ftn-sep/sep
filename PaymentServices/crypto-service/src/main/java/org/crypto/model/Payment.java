@@ -45,7 +45,7 @@ public class Payment {
     private LocalDateTime validUntil;
 
     @Column
-    private String coinGateOrderId;
+    private Long coinGateOrderId;
 
     @Column
     private String successUrl;
