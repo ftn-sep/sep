@@ -24,6 +24,7 @@
         <module>pcc-service</module>
         <module>issuer-service</module>
         <module>Common</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>

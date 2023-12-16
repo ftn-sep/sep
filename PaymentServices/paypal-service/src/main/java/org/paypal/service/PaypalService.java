@@ -87,7 +87,7 @@ public class PaypalService {
         order.setPurchaseUnits(List.of(purchaseUnit));
         order.setIntent(OrderIntent.CAPTURE);
         var appContext = new PaypalAppContextDTO();
-        appContext.setReturnUrl("http://localhost:8082/api/paypal/success");
+        appContext.setReturnUrl("http://localhost:8080/api/paypal/success");
         appContext.setCancelUrl(paymentInfo.getSuccessUrl());
         order.setApplicationContext(appContext);
         var accessTokenDto = getAccessToken();
