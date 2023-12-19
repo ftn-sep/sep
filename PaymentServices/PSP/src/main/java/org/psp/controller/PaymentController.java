@@ -16,8 +16,8 @@ public class PaymentController {
     private final PspService pspService;
 
     @GetMapping
-    public String hello() {
-        return "hello from psp";
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.status(HttpStatus.OK).body("fjasfkljalk");
     }
 
     @GetMapping(value = "/ping-acq")

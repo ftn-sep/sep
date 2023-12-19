@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class PspService {
 
 
-  apiHost: string = 'http://localhost:8080/';
+  apiHost: string = 'http://localhost:8010/';
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export class PspService {
   constructor(private http: HttpClient) { }
 
   generateUrl(paymentRequest: any) : Observable<any> {
-    return this.http.post(this.apiHost + 'api/psp/card-payment', paymentRequest);
+    return this.http.post(this.apiHost + 'api/psp/payment/card', paymentRequest);
   }
 
   bitcoinPayment(paymentRequest: any) {

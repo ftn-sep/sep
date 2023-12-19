@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AcquirerBankService {
-  apiHost: string = 'http://localhost:8081/';
+  apiHost: string = 'http://localhost:8010/';
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
     'Content-Type': 'application/json',

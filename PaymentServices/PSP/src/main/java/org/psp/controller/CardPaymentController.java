@@ -20,7 +20,7 @@ public class CardPaymentController {
     private final CardPaymentService cardPaymentService;
 
     @PostMapping(
-            value = "/card-payment",
+            value = "/payment/card",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
