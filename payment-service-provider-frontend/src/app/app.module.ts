@@ -20,20 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { initializeKeycloak } from './init/keycloak-init.factory';
-
-// function initializeKeycloak(keycloak: KeycloakService) {
-//   return () => 
-//     keycloak.init({
-//       config: {
-//         url: 'http://localhost:8080',
-//         realm: 'psp-realm',
-//         clientId: 'psp-client'
-//       },
-//       initOptions: {
-//         onLoad: 'check-sso',
-//       }
-//     })
-// }
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -63,6 +50,7 @@ import { initializeKeycloak } from './init/keycloak-init.factory';
     MatSelectModule,
     MatTableModule,
     MatSnackBarModule,
+    NgbModule,
   ],
   providers: [
     DatePipe,

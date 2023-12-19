@@ -2,7 +2,9 @@ package org.acquirer.controller;
 
 import jakarta.validation.Valid;
 import org.acquirer.dto.PaymentResultResponse;
+import org.acquirer.dto.SellersBankInformationDto;
 import org.acquirer.service.AcquirerService;
+import org.apache.coyote.Response;
 import org.sep.dto.card.CardDetails;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
@@ -41,7 +43,6 @@ public class AcquirerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> paymentUrlAndIdRequest(@RequestBody PaymentUrlAndIdRequest paymentRequest) {
-
         PaymentUrlIdResponse paymentUrlIdResponse = acquirerService.generatePaymentUrlAndId(paymentRequest);
         return new ResponseEntity<>(paymentUrlIdResponse, HttpStatus.OK);
     }
@@ -56,11 +57,14 @@ public class AcquirerController {
         PaymentResultResponse paymentResult = acquirerService.cardDetailsPayment(paymentRequest);
 
         return new ResponseEntity<>(URI.create(paymentResult.getRedirectUrl()), HttpStatus.OK);
+    }
 
-        // da li redirektovati odavde ili sa fronta ??
-//        return ResponseEntity.status(HttpStatus.FOUND)
-//                .location(URI.create(paymentResult.getRedirectUrl()))
-//                .header("Access-Control-Allow-Origin", "http://localhost:4200/success-payment")
-//                .build();
+    @GetMapping("/sellers-info/{accountNumber}")
+    ResponseEntity<SellersBankInformationDto> getSellersBankInfo(@PathVariable String accountNumber) {
+        SellersBankInformationDto sellersBankInformationDto = acquirerService.getMerchantInfo(accountNumber);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(sellersBankInformationDto);
     }
 }

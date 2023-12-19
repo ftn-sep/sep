@@ -13,8 +13,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityWebFilterChain(ServerHttpSecurity serverHttpSecurity) {
-        serverHttpSecurity.csrf()
-                .disable()
+        serverHttpSecurity
+//                .csrf().disable()
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
                         .pathMatchers("/eureka/**").permitAll()

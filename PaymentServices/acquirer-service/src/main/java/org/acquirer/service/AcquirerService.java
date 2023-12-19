@@ -122,6 +122,27 @@ public class AcquirerService {
             transactionDetailsService.onErrorPayment(payment);
         }
     }
+
+    public SellersBankInformationDto getMerchantInfo(String accountNumber) {
+        BankAccount bankAccount = bankAccountRepository.findByAccountNumber(accountNumber).orElseThrow(
+                () -> new NotFoundException("Bank account with given account number: " + accountNumber + " doesn't exist")
+        );
+
+        if (bankAccount.getMerchantId() == null || bankAccount.getMerchantPassword() == null) {
+            createMerchantIdAndPassword(bankAccount);
+        }
+
+        return SellersBankInformationDto.builder()
+                .merchantId(bankAccount.getMerchantId())
+                .merchantPassword(bankAccount.getMerchantPassword())
+                .build();
+    }
+
+    private void createMerchantIdAndPassword(BankAccount bankAccount) {
+        bankAccount.setMerchantId(UUID.randomUUID().toString().substring(0, 20));
+        bankAccount.setMerchantPassword(UUID.randomUUID().toString().replace("-", "").substring(0, 25));
+        bankAccountRepository.save(bankAccount);
+    }
 }
 
 

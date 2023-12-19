@@ -1,67 +1,84 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTable } from '@angular/material/table';
 import { KeycloakService } from 'keycloak-angular';
-import { Movie, MovieBackendService } from 'src/app/services/movie-backend.service';
+import { PspService } from 'src/app/services/psp/psp.service';
 
 @Component({
   selector: 'app-content',
-  standalone: true,
   templateUrl: './content.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule],
   styleUrl: './content.component.css'
 })
 export class ContentComponent {
-
-  movies: Movie[] = []
-  displayedColumns: string[] = ['title', 'director', 'year']; 
-  
-  @ViewChild(MatTable) table!: MatTable<any>;
+  paymentForm: FormGroup;
+  dataFromMerchant: any = {};
+  selectedMethods: string[] = [];
+  alreadyHasSellerId: boolean = false;
 
   constructor(
     private keycloakService: KeycloakService,
-    private backend: MovieBackendService,
-    private snackBar: MatSnackBar) {
-    
+    private snackBar: MatSnackBar,
+    private pspService: PspService,
+    private formbuilder: FormBuilder,
+  ) {
+    this.paymentForm = this.formbuilder.group({
+      paymentMethod: [''],
+    });
+  }
+
+  ngOnInit() {
+    this.selectedMethods = this.mapRolesToMethods();
+    this.alreadyHasSellerId = this.selectedMethods.includes('card');
+  }
+
+  mapRolesToMethods() : string[] {
+    let methods = ['card','paypal','crypto','qr'];
+    let currentMethods : string[] = [];
+    methods.forEach((method) => {
+      if (this.keycloakService.isUserInRole(method.toUpperCase() + '_PAYMENT')) 
+        currentMethods.push(method);
+    })
+    return currentMethods;
+  }
+
+  changeMethods(method: string) {
+    if (this.selectedMethods.includes(method)) {
+      this.selectedMethods = this.selectedMethods.filter((m) => m != method);
+    }
+    else {
+      this.selectedMethods.push(method);
+    }
+  }
+
+  submit() {
+    console.log(this.selectedMethods);
+
+    let accountNumber = null;
+    if (!this.alreadyHasSellerId && this.selectedMethods.includes('card')) {
+      console.log('modal');
+      // todo: open modal for bank account number
+      accountNumber = '1000987654321';
+    }
+    const obj = {
+      selectedMethods: this.selectedMethods,
+      sellerUsername: this.keycloakService.getKeycloakInstance().idTokenParsed!['email'],
+      accountNumber: accountNumber
+    };
+
+    this.pspService.sendNewPaymentMethods(obj).subscribe({
+      next: (res) => {
+        console.log(res);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
   }
 
   logout() {
     this.keycloakService.logout();
-  }
-
-  getAllMovies() {
-    this.backend.getAllMovies().subscribe(
-        
-        response => {
-          alert(response);
-          
-          this.movies = response
-          this.table.renderRows();          
-        },
-
-        error => {
-          this.handleError(error.error)
-        })
-  }
-
-  onMovieIdChange(event: any){
-    this.getMovieById(event.value);
-  }
-
-  private getMovieById(id: number) {
-    this.backend.getMovieById(id).subscribe(
-          
-        response => {
-          this.movies = [response]
-          this.table.renderRows();
-        },
-        
-        error => {
-          this.handleError(error.error)
-        })
-  }
-
-  private handleError(error: any) {
-    this.displayError(error.code + ' ' + error.reason + ". " + error.message)
   }
 
   private displayError(message: string) {
