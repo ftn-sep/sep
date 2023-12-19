@@ -20,12 +20,12 @@ export interface Problem {
 })
 export class MovieBackendService {
 
-  private readonly backendUrl = 'http://localhost:8010/api/psp'
+  private readonly backendUrl = '/api'
 
   constructor(private http: HttpClient) { }
 
   getAllMovies(): Observable<Array<Movie>> {
-    return this.http.get<Array<Movie>>(this.backendUrl);
+    return this.http.get<Array<Movie>>(this.backendUrl + '/psp');
   }
 
   getMovieById(id: number): Observable<Movie> {
