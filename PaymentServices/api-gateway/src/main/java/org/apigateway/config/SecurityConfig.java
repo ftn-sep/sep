@@ -17,12 +17,14 @@ public class SecurityConfig {
         serverHttpSecurity
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("/eureka/**").permitAll()
-                        .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/api/psp/payment/**").permitAll()
-                        .pathMatchers("api/psp/subscribed-methods").permitAll()
-                        .anyExchange()
-                        .authenticated())
+                        .pathMatchers("api/psp/payment-methods").authenticated()
+                        .anyExchange().permitAll())
+//                        .pathMatchers("/eureka/**").permitAll()
+//                        .pathMatchers("/actuator/**").permitAll()
+//                        .pathMatchers("/api/psp/payment/**").permitAll()
+//                        .pathMatchers("api/psp/subscribed-methods").permitAll()
+//                        .anyExchange()
+//                        .authenticated())
                 .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
                         .jwt(Customizer.withDefaults()));
 
