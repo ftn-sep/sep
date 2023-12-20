@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { KeycloakService } from 'keycloak-angular';
 import { ToastrService } from 'ngx-toastr';
@@ -9,13 +10,18 @@ import { PspService } from 'src/app/services/psp/psp.service';
   selector: 'app-content',
   templateUrl: './content.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule
+  ],
   styleUrl: './content.component.css'
 })
 export class ContentComponent {
   paymentForm: FormGroup;
   selectedMethods: string[] = [];
   accountNumberNotNeeded: boolean = false;
+  showInputForAccNumber: boolean = false;
 
   constructor(
     private keycloakService: KeycloakService,
@@ -26,10 +32,13 @@ export class ContentComponent {
   ) {
     this.paymentForm = this.formbuilder.group({
       paymentMethod: [''],
+      accountNumber: ['']
     });
   }
 
   ngOnInit() {
+    this.showInputForAccNumber = false;
+
     const sellerUsername = this.keycloakService.getKeycloakInstance().idTokenParsed!['email'];
     this.pspService.getSubscribedPaymentMethodsByUsername(sellerUsername).subscribe({
       next: (res: any) => {
@@ -37,7 +46,7 @@ export class ContentComponent {
         this.accountNumberNotNeeded = res.hasMerchantIdAndPassword;
       },
       error: (err) => {
-        this.displayError(err);
+        this.toastrService.error(err.error);
       }
     });
   }
@@ -49,27 +58,36 @@ export class ContentComponent {
     else {
       this.selectedMethods.push(method);
     }
+
+    if (this.isNeededAccNumber()) {
+      this.showInputForAccNumber = true;
+    }
+    else this.showInputForAccNumber = false;
+
   }
 
+  isNeededAccNumber() {
+    return !this.accountNumberNotNeeded && this.selectedMethods.some(m => m === 'card' || m === 'qr');
+  }
   submit() {
-    let accountNumber = null;
-    if (!this.accountNumberNotNeeded && this.selectedMethods.some(m => m === 'card' || m === 'qr')) {
-      console.log('modal');
-      // todo: open modal for bank account number
-      accountNumber = '1000987654321';
-    }
     const obj = {
       selectedMethods: this.selectedMethods,
       sellerUsername: this.keycloakService.getKeycloakInstance().idTokenParsed!['email'],
-      accountNumber: accountNumber
+      accountNumber: this.paymentForm.value.accountNumber
     };
+
+    if (!obj.sellerUsername || (!obj.accountNumber && this.isNeededAccNumber())) {
+      this.toastrService.error('Fill Inputs');
+      return;
+    }
 
     this.pspService.sendNewPaymentMethods(obj).subscribe({
       next: (res) => {
         this.toastrService.success('Successfully changed subscriptions!');
+        // send res.sellerId to merchant
       },
       error: (err) => {
-        this.toastrService.error(err.error);
+        this.toastrService.error("Something went wrong");
       }
     });
   }

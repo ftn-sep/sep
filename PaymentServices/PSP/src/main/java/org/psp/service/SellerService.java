@@ -1,5 +1,6 @@
 package org.psp.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.psp.dto.PaymentMethodsDto;
 import org.psp.dto.SelectedPaymentMethodsDto;
@@ -10,6 +11,7 @@ import org.psp.repository.SellerRepository;
 import org.psp.service.feignClients.AcquirerClient;
 import org.sep.enums.PaymentMethod;
 import org.sep.exceptions.BadRequestException;
+import org.sep.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -60,11 +62,17 @@ public class SellerService {
     }
 
     private void getSellersBankInfo(Seller seller, SelectedPaymentMethodsDto selectedPaymentMethodsDto) {
-        SellersBankInformationDto sellersInfo =
-                acquirerClient.getSellersBankInfo(selectedPaymentMethodsDto.getAccountNumber()).getBody();
+        try {
+            SellersBankInformationDto sellersInfo =
+                    acquirerClient.getSellersBankInfo(selectedPaymentMethodsDto.getAccountNumber()).getBody();
 
-        seller.setMerchantId(sellersInfo.getMerchantId());
-        sellersInfo.setMerchantPassword(sellersInfo.getMerchantPassword());
+            seller.setMerchantId(sellersInfo.getMerchantId());
+            seller.setMerchantPassword(sellersInfo.getMerchantPassword());
+
+        } catch (FeignException.NotFound exception) {
+            throw new NotFoundException(exception.getLocalizedMessage());
+        }
+
     }
 
     private void changePaymentMethods(Seller seller, SelectedPaymentMethodsDto selectedPaymentMethodsDto) {

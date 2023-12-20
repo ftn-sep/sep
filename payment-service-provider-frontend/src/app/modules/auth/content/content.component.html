@@ -29,6 +29,12 @@
               <label for="bitcoin"><i class="fa-brands fa-bitcoin" style="color: #ffd700;"></i>Crypto</label>
               <input id="bitcoin" value="crypto" type="checkbox" (change)="changeMethods('crypto')" [checked]="selectedMethods.includes('crypto')"/>
             </div>
+
+            
+            <div class="form__radio mt-3" *ngIf="showInputForAccNumber">
+              <label><i class="fa-solid fa-credit-card" style="color: #5585d8;"></i>Account Number</label>
+              <input type="text" formControlName="accountNumber" class="form-control" style="background-color: aliceblue; margin-left: 10px;"/>
+            </div>
           </div>
         </fieldset>
     
