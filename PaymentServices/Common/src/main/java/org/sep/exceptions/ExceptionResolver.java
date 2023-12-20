@@ -23,6 +23,13 @@ public class ExceptionResolver {
         return new ResponseEntity<>(exception.getMessage(), headers, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotSubscribedToPaymentMethod.class)
+    public ResponseEntity<?> notSubscribedException(NotSubscribedToPaymentMethod exception) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<>(exception.getMessage(), headers, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> notFoundException(NotFoundException exception) {
         HttpHeaders headers = new HttpHeaders();

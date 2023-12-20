@@ -7,8 +7,6 @@ import { Observable } from 'rxjs';
 })
 export class PspService {
 
-
-
   apiHost: string = '/api';
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
@@ -41,5 +39,13 @@ export class PspService {
 
   sendNewPaymentMethods(selectedMethods: any) {
     return this.http.post(this.apiHost + '/psp/payment-methods', selectedMethods);
+  }
+
+  getSubscribedPaymentMethodsByMerchantOrderId(merchantOrderId: string) {
+    return this.http.get(this.apiHost + '/psp/subscribed-methods?merchantOrderId=' + merchantOrderId);
+  }
+
+  getSubscribedPaymentMethodsByUsername(sellerUsername: any) {
+    return this.http.get(this.apiHost + '/psp/subscribed-methods?username=' + sellerUsername);
   }
 }

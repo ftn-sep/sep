@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { KeycloakService } from 'keycloak-angular';
+import { ToastrService } from 'ngx-toastr';
 import { PspService } from 'src/app/services/psp/psp.service';
 
 @Component({
@@ -13,15 +14,15 @@ import { PspService } from 'src/app/services/psp/psp.service';
 })
 export class ContentComponent {
   paymentForm: FormGroup;
-  dataFromMerchant: any = {};
   selectedMethods: string[] = [];
-  alreadyHasSellerId: boolean = false;
+  accountNumberNotNeeded: boolean = false;
 
   constructor(
     private keycloakService: KeycloakService,
     private snackBar: MatSnackBar,
     private pspService: PspService,
     private formbuilder: FormBuilder,
+    private toastrService: ToastrService,
   ) {
     this.paymentForm = this.formbuilder.group({
       paymentMethod: [''],
@@ -29,18 +30,16 @@ export class ContentComponent {
   }
 
   ngOnInit() {
-    this.selectedMethods = this.mapRolesToMethods();
-    this.alreadyHasSellerId = this.selectedMethods.includes('card');
-  }
-
-  mapRolesToMethods() : string[] {
-    let methods = ['card','paypal','crypto','qr'];
-    let currentMethods : string[] = [];
-    methods.forEach((method) => {
-      if (this.keycloakService.isUserInRole(method.toUpperCase() + '_PAYMENT')) 
-        currentMethods.push(method);
-    })
-    return currentMethods;
+    const sellerUsername = this.keycloakService.getKeycloakInstance().idTokenParsed!['email'];
+    this.pspService.getSubscribedPaymentMethodsByUsername(sellerUsername).subscribe({
+      next: (res: any) => {
+        this.selectedMethods = res.paymentMethods.map((m: string) => m.toLowerCase());
+        this.accountNumberNotNeeded = res.hasMerchantIdAndPassword;
+      },
+      error: (err) => {
+        this.displayError(err);
+      }
+    });
   }
 
   changeMethods(method: string) {
@@ -53,10 +52,8 @@ export class ContentComponent {
   }
 
   submit() {
-    console.log(this.selectedMethods);
-
     let accountNumber = null;
-    if (!this.alreadyHasSellerId && this.selectedMethods.includes('card')) {
+    if (!this.accountNumberNotNeeded && this.selectedMethods.some(m => m === 'card' || m === 'qr')) {
       console.log('modal');
       // todo: open modal for bank account number
       accountNumber = '1000987654321';
@@ -69,10 +66,10 @@ export class ContentComponent {
 
     this.pspService.sendNewPaymentMethods(obj).subscribe({
       next: (res) => {
-        console.log(res);
+        this.toastrService.success('Successfully changed subscriptions!');
       },
       error: (err) => {
-        console.log(err);
+        this.toastrService.error(err.error);
       }
     });
   }

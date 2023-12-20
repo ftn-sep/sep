@@ -136,12 +136,16 @@
   }
   
   .form__radios {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    min-height: 30vh;
     gap: 1em;
+
   }
   
   .form__radio {
     align-items: center;
+    max-height: 6vh;
     background-color: #fefdfe;
     border-radius: 1em;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.0625);

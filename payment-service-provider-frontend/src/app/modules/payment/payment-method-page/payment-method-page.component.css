@@ -143,6 +143,7 @@
   }
   
   .form__radio {
+    max-height: 6vh;
     align-items: center;
     background-color: #fefdfe;
     border-radius: 1em;

@@ -11,9 +11,11 @@ import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
 import org.sep.dto.card.TransactionDetails;
+import org.sep.enums.PaymentMethod;
 import org.sep.enums.PaymentStatus;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
+import org.sep.exceptions.NotSubscribedToPaymentMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,11 +50,11 @@ public class CardPaymentService {
     }
 
     public PaymentUrlIdResponse sendRequestForPaymentUrl(PaymentRequestFromClient paymentRequest) {
-
         Long sellerId = Long.valueOf(paymentRequest.getMerchantOrderId().toString().substring(0, 4));
-
         Seller seller = sellerRepository.findBySellerId(sellerId)
                 .orElseThrow(() -> new NotFoundException("Seller doesn't exist!"));
+
+        SubscriberService.checkIfSellerIsSubscribedToMethod(seller, PaymentMethod.CARD);
 
         PaymentUrlAndIdRequest paymentReq = PaymentUrlAndIdRequest.builder()
                 .merchantId(seller.getMerchantId())
