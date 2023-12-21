@@ -29,12 +29,12 @@ export class ProductItemsComponent {
     return [
       {
         title: 'Kodifikacija',
-        price: 120.,
+        price: 12.,
         img: 'https://thumbs.dreamstime.com/b/copyright-law-document-judge-gavel-concept-legal-education-128693946.jpg',
       },
       {
         title: 'Izdavanje zakona',
-        price: 500.,
+        price: 5.,
         img: 'https://londonmedarb.com/wp-content/uploads/2015/08/Legal-Paperwork-003.jpg'
       }
     ];

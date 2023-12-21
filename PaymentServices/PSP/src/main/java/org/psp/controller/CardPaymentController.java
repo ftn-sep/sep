@@ -2,7 +2,9 @@ package org.psp.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.psp.model.Payment;
 import org.psp.service.CardPaymentService;
+import org.psp.service.PaymentService;
 import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.PaymentUrlIdResponse;
 import org.sep.dto.card.TransactionDetails;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class CardPaymentController {
 
     private final CardPaymentService cardPaymentService;
+    private final PaymentService paymentService;
 
     @PostMapping(
             value = "/card-payment",
@@ -34,8 +37,7 @@ public class CardPaymentController {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> updatePaymentDetails(@RequestBody TransactionDetails transactionDetails) {
-        cardPaymentService.updatePaymentDetails(transactionDetails);
+        paymentService.updatePaymentDetails(transactionDetails);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
