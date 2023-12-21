@@ -15,6 +15,7 @@ import org.sep.enums.PaymentStatus;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -69,6 +70,7 @@ public class PaymentService {
         return new PaymentUrlIdResponse(coinGateResponse.getPayment_url(), payment.getId(), payment.getAmount());
     }
 
+    @Scheduled(fixedDelay = 60000)
     public void completePayment() {
 
         List<Payment> unfinishedPayments = paymentRepository.findAllByStatus(PaymentStatus.IN_PROGRESS)
@@ -83,14 +85,18 @@ public class PaymentService {
                     .bodyToMono(OrderResponse.class)
                     .block();
 
-            if(coinGateResponse.getStatus().equals("paid")) {
-                unfinishedPayment.setStatus(PaymentStatus.DONE);
-                paymentRepository.save(unfinishedPayment);
-            } else {
-                unfinishedPayment.setStatus(PaymentStatus.ERROR);
-                paymentRepository.save(unfinishedPayment);
-            }
+            changePaymentStatus(unfinishedPayment, coinGateResponse);
             sendTransactionDetailsToPsp(unfinishedPayment);
+        }
+    }
+
+    private void changePaymentStatus(Payment unfinishedPayment, OrderResponse coinGateResponse) {
+        if(coinGateResponse.getStatus().equals("paid")) {
+            unfinishedPayment.setStatus(PaymentStatus.DONE);
+            paymentRepository.save(unfinishedPayment);
+        } else {
+            unfinishedPayment.setStatus(PaymentStatus.ERROR);
+            paymentRepository.save(unfinishedPayment);
         }
     }
 
@@ -112,6 +118,6 @@ public class PaymentService {
         Payment existingPayment = paymentRepository.findPaymentByMerchantOrderId(paymentRequest.getMerchantOrderId())
                 .orElse(null);
 
-        if (existingPayment != null) throw new BadRequestException("Payment process already in progress");
+        if (existingPayment != null) throw new BadRequestException("Payment doesn't exist !");
     }
 }
