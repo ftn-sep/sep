@@ -18,5 +18,7 @@ public class SelectedPaymentMethodsDto {
 
     @Pattern(regexp = "([0-9]{13})?", message = "Account number must have 13 digits only")
     private String accountNumber;
+
+    private String apiKey;
     private List<String> selectedMethods;
 }

@@ -46,7 +46,7 @@ export class ContentComponent {
         this.accountNumberNotNeeded = res.hasMerchantIdAndPassword;
       },
       error: (err) => {
-        this.toastrService.error(err.error);
+        console.log(err.error)
       }
     });
   }
@@ -82,9 +82,10 @@ export class ContentComponent {
     }
 
     this.pspService.sendNewPaymentMethods(obj).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.toastrService.success('Successfully changed subscriptions!');
         // send res.sellerId to merchant
+        localStorage.setItem('sellerId', res.sellerId)
       },
       error: (err) => {
         this.toastrService.error("Something went wrong");
