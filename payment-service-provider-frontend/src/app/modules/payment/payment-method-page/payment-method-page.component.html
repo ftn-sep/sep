@@ -4,30 +4,30 @@
       <h1>Payment Method</h1>
     </header>
   
-    <form [formGroup]="paymentForm" (ngSubmit)="buyItem()" class="form">
-
+    <div *ngIf="subscribedPaymentMethods.length === 0">
+      <p>Merchant is not subscribed to any of the payment methods</p>
+    </div>
+    <form *ngIf="subscribedPaymentMethods.length !== 0" [formGroup]="paymentForm" (ngSubmit)="buyItem()" class="form">
       <fieldset>
-        
-  
-        <div class="form__radios">
-            <div class="form__radio">
+        <div class="form__radios" style="min-height: 30vh; display: flex; flex-direction: column;">
+            <div class="form__radio" *ngIf="subscribedPaymentMethods.includes('card')">
                 <label for="cardpayment">
                   <i class="fa-solid fa-credit-card" style="color: #5585d8;"></i>
                   Card Payment</label>
                 <input checked id="cardpayment" value="cardpayment" formControlName="paymentMethod" type="radio" />
             </div>
 
-          <div class="form__radio">
+          <div class="form__radio"  *ngIf="subscribedPaymentMethods.includes('qr')">
             <label for="qr"><i class="fa-solid fa-qrcode" style="color: #000000;"></i>QR Payment</label>
             <input id="qr" formControlName="paymentMethod" value="qr" type="radio" />
           </div>
   
-          <div class="form__radio">
+          <div class="form__radio"  *ngIf="subscribedPaymentMethods.includes('paypal')">
             <label for="paypal"><i class="fa-brands fa-paypal" style="color: #005eff;"></i>PayPal</label>
             <input id="paypal" formControlName="paymentMethod" value="paypal" type="radio" />
           </div>
 
-          <div class="form__radio">
+          <div class="form__radio" *ngIf="subscribedPaymentMethods.includes('crypto')">
             <label for="bitcoin"><i class="fa-brands fa-bitcoin" style="color: #ffd700;"></i>Bitcoin</label>
             <input id="bitcoin" formControlName="paymentMethod" value="bitcoin" type="radio" />
           </div>

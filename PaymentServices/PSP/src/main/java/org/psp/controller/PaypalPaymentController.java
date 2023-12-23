@@ -19,7 +19,7 @@ public class PaypalPaymentController {
     private final PaypalPaymentService paypalPaymentService;
 
     @PostMapping(
-            value = "/paypal-payment",
+            value = "/payment/paypal",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

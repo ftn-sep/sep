@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PaymentUrlAndIdRequest {
-
     private String merchantId;
     private String merchantPassword;
     private double amount;

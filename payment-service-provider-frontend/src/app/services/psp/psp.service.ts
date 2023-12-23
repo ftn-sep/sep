@@ -7,8 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PspService {
 
-
-  apiHost: string = 'http://localhost:8080/';
+  apiHost: string = '/api';
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -18,11 +17,11 @@ export class PspService {
   constructor(private http: HttpClient) { }
 
   generateUrl(paymentRequest: any) : Observable<any> {
-    return this.http.post(this.apiHost + 'api/psp/card-payment', paymentRequest);
+    return this.http.post(this.apiHost + '/psp/payment/card', paymentRequest);
   }
 
   bitcoinPayment(paymentRequest: any) {
-    return this.http.post(this.apiHost + 'api/psp/crypto-payment', paymentRequest);
+    return this.http.post(this.apiHost + '/psp/crypto-payment', paymentRequest);
   }
 
   qrPayment(paymentRequest: any) {
@@ -30,6 +29,18 @@ export class PspService {
   }
 
   paypalPayment(paymentRequest: any) {
-    return this.http.post(this.apiHost + 'api/psp/paypal-payment', paymentRequest);
+    return this.http.post(this.apiHost + '/psp/payment/paypal', paymentRequest);
+  }
+
+  sendNewPaymentMethods(selectedMethods: any) {
+    return this.http.post(this.apiHost + '/psp/payment-methods', selectedMethods);
+  }
+
+  getSubscribedPaymentMethodsByMerchantOrderId(merchantOrderId: string) {
+    return this.http.get(this.apiHost + '/psp/subscribed-methods?merchantOrderId=' + merchantOrderId);
+  }
+
+  getSubscribedPaymentMethodsByUsername(sellerUsername: any) {
+    return this.http.get(this.apiHost + '/psp/subscribed-methods?username=' + sellerUsername);
   }
 }

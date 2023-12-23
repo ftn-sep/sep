@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PspService } from 'src/app/services/psp/psp.service';
@@ -13,6 +14,7 @@ import { PspService } from 'src/app/services/psp/psp.service';
 export class PaymentMethodPageComponent implements OnInit {
   paymentForm: FormGroup;
   dataFromMerchant: any = {};
+  subscribedPaymentMethods: string[] = [];
 
   constructor(
     private pspService: PspService,
@@ -20,7 +22,8 @@ export class PaymentMethodPageComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private formbuilder: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private snackBar: MatSnackBar,
   ) {
     this.paymentForm = this.formbuilder.group({
       paymentMethod: [''],
@@ -34,6 +37,15 @@ export class PaymentMethodPageComponent implements OnInit {
       this.route.snapshot.queryParamMap.get('merchantOrderId');
     this.dataFromMerchant.merchantTimeStamp =
       this.route.snapshot.queryParamMap.get('merchantTimestamp');
+
+    this.pspService.getSubscribedPaymentMethodsByMerchantOrderId(this.dataFromMerchant.merchantOrderId).subscribe({
+      next: (res: any) => {
+        this.subscribedPaymentMethods = res.paymentMethods.map((m: string) => m.toLowerCase());
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    }); 
   }
 
   buyItem() {
@@ -65,9 +77,13 @@ export class PaymentMethodPageComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        console.log(error);
+        this.toastr.error(error.error);
       },
     });
+  }
+
+  private displayError(message: string) {
+    this.snackBar.open(message, 'Close', { duration: 5000})
   }
 
   bitcoinPayment() {
@@ -76,7 +92,7 @@ export class PaymentMethodPageComponent implements OnInit {
         window.location.replace(res.paymentUrl);
       },
       error: (err: any) => {
-        console.log(err);
+        this.toastr.error(err.error);
       },
     });
   }
@@ -87,7 +103,7 @@ export class PaymentMethodPageComponent implements OnInit {
         window.location.replace(res.paymentUrl);
       },
       error: (err: any) => {
-        console.log(err);
+        this.toastr.error(err.error);
       },
     });
   }

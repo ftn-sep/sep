@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.sep.enums.PaymentMethod;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,6 +22,9 @@ public class Seller {
     private Long id;
 
     @Column
+    private String username;
+
+    @Column
     private Long sellerId; // 1000-9999
 
     @Column
@@ -29,9 +36,9 @@ public class Seller {
     @Column
     private String merchantPassword;
 
-//    @ElementCollection(targetClass = PaymentMethod.class)
-//    @Enumerated(EnumType.STRING)
-//    private Set<PaymentMethod> availablePaymentMethods;
+    @ElementCollection(targetClass = PaymentMethod.class)
+    @Enumerated(EnumType.STRING)
+    private Set<PaymentMethod> availablePaymentMethods = new HashSet<>();
 
 
 }

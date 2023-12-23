@@ -25,10 +25,10 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-toastr/toastr.css",
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.css"
-              
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.js",
@@ -66,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "payment-service-provider-frontend:build:production"
+              "buildTarget": "payment-service-provider-frontend:build:production"
             },
             "development": {
-              "browserTarget": "payment-service-provider-frontend:build:development"
+              "buildTarget": "payment-service-provider-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,7 +77,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "payment-service-provider-frontend:build"
+            "buildTarget": "payment-service-provider-frontend:build"
           }
         },
         "test": {
@@ -101,5 +101,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "791677e3-7c18-452e-9229-8a9d7cccce24"
   }
 }

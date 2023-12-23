@@ -6,6 +6,7 @@ import org.psp.repository.SellerRepository;
 import org.sep.dto.PaymentRequestFromClient;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
+import org.sep.enums.PaymentMethod;
 import org.sep.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +24,11 @@ public class CardPaymentService {
     private static final String ERROR_URL = "http://localhost:4200/error-payment";
 
     public PaymentUrlIdResponse sendRequestForPaymentUrl(PaymentRequestFromClient paymentRequest) {
-
         Long sellerId = Long.valueOf(paymentRequest.getMerchantOrderId().toString().substring(0, 4));
-
         Seller seller = sellerRepository.findBySellerId(sellerId)
                 .orElseThrow(() -> new NotFoundException("Seller doesn't exist!"));
+
+        SubscriberService.checkIfSellerIsSubscribedToMethod(seller, PaymentMethod.CARD);
 
         PaymentUrlAndIdRequest paymentReq = PaymentUrlAndIdRequest.builder()
                 .merchantId(seller.getMerchantId())

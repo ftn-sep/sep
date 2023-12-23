@@ -30,7 +30,7 @@ public class Payment {
     private LocalDateTime merchantTimeStamp;
 
     @Column(nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
     @Column

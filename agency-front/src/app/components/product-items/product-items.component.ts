@@ -19,9 +19,9 @@ export class ProductItemsComponent {
 
   
   buy(item: any) {
-    const merchOrderId = '1000' + this.getRandomSixDigits();
-    const merchTimestamp = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
-    window.location.href = `http://localhost:4200/payment-method-page?merchantOrderId=${merchOrderId}&merchantTimestamp=${merchTimestamp}&amount=${item.price}`
+      const merchOrderId = '1234' + this.getRandomSixDigits();
+      const merchTimestamp = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
+      window.location.href = `http://localhost:4200/payment-method-page?merchantOrderId=${merchOrderId}&merchantTimestamp=${merchTimestamp}&amount=${item.price}`
   }
 
 
@@ -40,7 +40,7 @@ export class ProductItemsComponent {
     ];
   }
   getRandomSixDigits() {
-    return Math.floor(100000 + Math.random() * 999999);
+    return Math.floor(100000 + Math.random() * 899999);
   }
 
 }

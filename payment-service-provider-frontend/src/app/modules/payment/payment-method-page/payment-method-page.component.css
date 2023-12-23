@@ -17,6 +17,7 @@
   
   html {
     box-sizing: border-box;
+    overflow: hidden;
   }
   
   body {
@@ -30,6 +31,7 @@
     place-items: center;
     height: 100%;
     margin: 0;
+    overflow: hidden;
     
   }
   
@@ -141,6 +143,7 @@
   }
   
   .form__radio {
+    max-height: 6vh;
     align-items: center;
     background-color: #fefdfe;
     border-radius: 1em;

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AcquirerBankService {
-  apiHost: string = 'http://localhost:8081/';
+  apiHost: string = '/api';
   headers: HttpHeaders = new HttpHeaders({
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export class AcquirerBankService {
   constructor(private http: HttpClient) { }
 
   generateUrl(paymentDetails: any) : Observable<any> {
-    return this.http.post(this.apiHost + 'api/acquirer/payment-card-details', paymentDetails);
+    return this.http.post(this.apiHost + '/acquirer/payment-card-details', paymentDetails);
   }
 }
 
