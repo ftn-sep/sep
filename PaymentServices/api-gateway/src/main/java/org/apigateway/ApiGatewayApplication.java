@@ -13,16 +13,5 @@ public class ApiGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
-//
-//    @Bean
-//    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-//        return builder.routes()
-//                .route("psp-service", r -> r
-//                        .path("/api/psp/**")
-//                        .filters(f -> f
-//                                .filter(new JwtPropagationFilter())
-//                        )
-//                        .uri("http://your-microservice-url"))
-//                .build();
-//    }
+
 }

@@ -44,10 +44,6 @@ public class PaypalService {
         httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();
     }
 
-    public String hello() {
-        return "Hello from Paypal";
-    }
-
     public AccessTokenResponseDTO getAccessToken() throws Exception {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(paypalConfig.getBaseUrl() + "/v1/oauth2/token"))
