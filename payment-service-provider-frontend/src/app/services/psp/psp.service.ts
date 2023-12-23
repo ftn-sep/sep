@@ -21,7 +21,7 @@ export class PspService {
   }
 
   bitcoinPayment(paymentRequest: any) {
-    return this.http.get(this.apiHost + '/psp/ping-crypto', {
+    return this.http.post(this.apiHost + '/psp/ping-crypto', paymentRequest, {
         headers: new HttpHeaders({
           'Accept': 'text/html',
         }),

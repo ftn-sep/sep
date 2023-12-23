@@ -26,17 +26,6 @@ public class AcquirerController {
         this.acquirerService = acquirerService;
     }
 
-    @GetMapping(value = "/hello")
-    public String hello(@RequestParam String text) {
-        return "Hello from Acquirer";
-    }
-
-    @GetMapping(value = "/card-payment")
-    public String cardPayment() {
-        System.out.println("Hello from Acquirer !");
-        return this.acquirerService.pingPcc();
-    }
-
     @PostMapping(
             value = "/payment-url-request",
             consumes = MediaType.APPLICATION_JSON_VALUE,

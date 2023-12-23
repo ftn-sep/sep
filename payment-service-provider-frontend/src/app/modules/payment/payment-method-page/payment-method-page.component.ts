@@ -89,7 +89,7 @@ export class PaymentMethodPageComponent implements OnInit {
   bitcoinPayment() {
     this.pspService.bitcoinPayment(this.dataFromMerchant).subscribe({
       next: (res: any) => {
-        this.toastr.success(res);
+        window.location.replace(res.paymentUrl);
       },
       error: (err: any) => {
         this.toastr.error(err.error);

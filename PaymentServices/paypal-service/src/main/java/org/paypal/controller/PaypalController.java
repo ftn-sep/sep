@@ -18,12 +18,6 @@ public class PaypalController {
     @Autowired
     private PaypalService paypalService;
 
-    @GetMapping(value = "/hello")
-    public String hello() {
-
-        return paypalService.hello();
-    }
-
     @PostMapping(
             value = "/payment",
             consumes = MediaType.APPLICATION_JSON_VALUE,
