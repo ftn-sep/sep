@@ -32,7 +32,6 @@ public class CryptoPaymentService {
 
         PaymentUrlAndIdRequest paymentReq = PaymentUrlAndIdRequest.builder()
                 .merchantId(seller.getMerchantId())
-                .merchantPassword(seller.getMerchantPassword())
                 .amount(paymentRequest.getAmount())
                 .merchantOrderId(paymentRequest.getMerchantOrderId())
                 .merchantTimestamp(paymentRequest.getMerchantTimeStamp())

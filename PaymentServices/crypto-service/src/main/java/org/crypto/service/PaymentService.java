@@ -3,6 +3,7 @@ package org.crypto.service;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.crypto.config.CoingateConfig;
+import org.crypto.dto.CompletePayment;
 import org.crypto.dto.OrderResponse;
 import org.crypto.dto.CoingateOrder;
 import org.crypto.model.Payment;
@@ -48,8 +49,7 @@ public class PaymentService {
                 .price_amount(payment.getAmount())
                 .cancel_url(payment.getFailedUrl())
                 .success_url(payment.getSuccessUrl())
-                .callback_url("http://localhost:8010/api/crypto/complete-payment")
-                .callback_url(payment.getSuccessUrl())
+                .callback_url("https://cheerful-pig-boss.ngrok-free.app/api/crypto/complete-payment")
                 .token(payment.getUuid())
                 .build();
 
@@ -68,27 +68,16 @@ public class PaymentService {
         return new PaymentUrlIdResponse(coinGateResponse.getPayment_url(), payment.getId(), payment.getAmount());
     }
 
-    @Scheduled(fixedDelay = 180000)
-    public void completePayment() {
+    public void completePayment(CompletePayment completePayment) {
 
-        List<Payment> unfinishedPayments = paymentRepository.findAllByStatus(PaymentStatus.IN_PROGRESS)
-                .orElseThrow(() -> new NotFoundException("There are no payments that are in progress !"));
+        Payment unfinishedPayment = paymentRepository.findPaymentByCoinGateOrderId(completePayment.getId())
+                .orElseThrow(() -> new NotFoundException("Payment doesn't exist !"));
 
-        for (Payment unfinishedPayment: unfinishedPayments) {
-
-            OrderResponse coinGateResponse = webClientBuilder.build().get()
-                    .uri(COINGATE_URL + "/" + unfinishedPayment.getCoinGateOrderId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + coingateConfig.getApikey())
-                    .retrieve()
-                    .bodyToMono(OrderResponse.class)
-                    .block();
-
-            changePaymentStatus(unfinishedPayment, coinGateResponse);
-            sendTransactionDetailsToPsp(unfinishedPayment);
-        }
+        changePaymentStatus(unfinishedPayment, completePayment);
+        sendTransactionDetailsToPsp(unfinishedPayment);
     }
 
-    private void changePaymentStatus(Payment unfinishedPayment, OrderResponse coinGateResponse) {
+    private void changePaymentStatus(Payment unfinishedPayment, CompletePayment coinGateResponse) {
         if(coinGateResponse.getStatus().equals("paid")) {
             unfinishedPayment.setStatus(PaymentStatus.DONE);
             paymentRepository.save(unfinishedPayment);
