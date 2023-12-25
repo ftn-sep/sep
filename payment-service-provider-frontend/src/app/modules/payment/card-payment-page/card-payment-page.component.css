@@ -97,16 +97,9 @@ p {
     height: 100vh;
 }
 
-
-.form-control:invalid {
-    border-color: #e3342f; /* Crvena boja okvira za nevažeće polje */
-  }
-  
-  /* Stil za povratno stanje važećeg polja */
-  .form-control:valid {
-    border-color: #38c172; /* Zelena boja okvira za važeće polje */
-  }
-
-  .form-control.ng-invalid {
-    border-color: #e3342f; /* Crvena boja okvira za nevažeće polje */
+.form-control.error {
+    border-color: #e3342f; 
+}
+.form-control.valid {
+    border-color: #38c172; 
   }
