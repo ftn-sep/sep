@@ -20,12 +20,15 @@ export class QrcodePaymentPageComponent implements OnInit {
   qrResultString: string = '';
   paymentId: string | null = null;
   uuid: string | null = null;
+  amountrsd: number = 0;
+  payer: string = 'Pera Peric';
+  payerAccount: string = '100000098765432167';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private acquirerBankService: AcquirerBankService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
     this.qrCode =
       'data:image/jpeg;base64,' +
@@ -75,10 +78,9 @@ export class QrcodePaymentPageComponent implements OnInit {
         this.qrResultString = code.data;
         let elements = this.qrResultString.split('|');
         this.receiver = elements[4].split(':')[1];
-        this.receiverAccount = elements[3]
-          .split(':')[1]
-          .substring(0, elements[3].split(':')[1].length - 2);
-        this.amount = Number(elements[5].split(':RSD')[1].split(',')[0]) / 60;
+        this.receiverAccount = elements[3].split(':')[1];
+        this.amountrsd = Number(elements[5].split(':RSD')[1].split(',')[0]);
+        this.amount = this.amountrsd / 60;
         this.description = elements[7].split(':')[1];
         this.qrCodeLoaded = true;
       } else {
