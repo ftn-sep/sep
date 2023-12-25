@@ -1,7 +1,9 @@
 package org.acquirer.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.acquirer.dto.*;
+import org.acquirer.dto.qrcode.QrCodeGenerateResponseDTO;
 import org.acquirer.model.BankAccount;
 import org.acquirer.model.BankBin;
 import org.acquirer.model.Payment;
@@ -15,12 +17,18 @@ import org.sep.dto.card.PaymentUrlIdResponse;
 import org.sep.enums.PaymentStatus;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,8 +42,12 @@ public class AcquirerService {
     private final TwoBanksPaymentService twoBanksPaymentService;
     private final TransactionDetailsService transactionDetailsService;
     private final BankBinRepository bankBinRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final String CARD_DETAILS_PAGE = "http://localhost:4200/acquirer-bank/card-details";
+    private static final String QRCODE_GENERATE_URL = "https://nbs.rs/QRcode/api/qr/v1/generate";
+    private static final String QR_CODE = "http://localhost:4200/qrcode-payment";
     private static final int PAYMENT_LINK_DURATION_MINUTES = 15;
     private static final int PAN_BIN_LENGTH = 6;
 
@@ -51,7 +63,6 @@ public class AcquirerService {
 
         return new PaymentUrlIdResponse(paymentUrl, payment.getId(), paymentRequest.getAmount());
     }
-
 
     public PaymentResultResponse cardDetailsPayment(CardDetails paymentRequest) {
 
@@ -132,6 +143,35 @@ public class AcquirerService {
         bankAccount.setMerchantId(UUID.randomUUID().toString().substring(0, 20));
         bankAccount.setMerchantPassword(UUID.randomUUID().toString().replace("-", "").substring(0, 25));
         bankAccountRepository.save(bankAccount);
+    }
+
+    public PaymentUrlIdResponse generateQRCode(PaymentUrlAndIdRequest paymentRequest) throws IOException, InterruptedException {
+        var payload = String.format("K:PR|V:01|C:1|R:100000012345678940|N:AGENCIJA|I:RSD%d,00|SF:289|S:Plaćanje|RO:001234", (int)paymentRequest.getAmount()*60);
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(QRCODE_GENERATE_URL))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
+                .POST(HttpRequest.BodyPublishers.ofString(payload))
+                .build();
+        var httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var content = response.body();
+        var orderResponse = objectMapper.readValue(content, QrCodeGenerateResponseDTO.class);
+        if (!orderResponse.getS().getDesc().equals("OK.")) {
+            throw new BadRequestException("Error while generating QR code");
+        }
+
+        //validatePaymentUrlRequest(paymentRequest);
+
+        UUID uuid = UUID.randomUUID();
+        Payment payment = paymentRepository.save(
+                new Payment(uuid, paymentRequest, PAYMENT_LINK_DURATION_MINUTES));
+
+        String paymentUrl = orderResponse.getI() + "|" + QR_CODE + "/" + uuid + "/" + payment.getId();
+
+        PaymentUrlIdResponse paymentUrlIdResponse = new PaymentUrlIdResponse(paymentUrl, payment.getId(), paymentRequest.getAmount());
+
+        return paymentUrlIdResponse;
     }
 }
 

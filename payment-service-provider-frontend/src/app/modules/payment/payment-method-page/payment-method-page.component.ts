@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,6 +15,9 @@ export class PaymentMethodPageComponent implements OnInit {
   paymentForm: FormGroup;
   dataFromMerchant: any = {};
   subscribedPaymentMethods: string[] = [];
+  qrCodeLoaded = false;
+  qrCode: string = '';
+  qrResultString: string = '';
 
   constructor(
     private pspService: PspService,
@@ -23,7 +26,7 @@ export class PaymentMethodPageComponent implements OnInit {
     private route: ActivatedRoute,
     private formbuilder: FormBuilder,
     private toastr: ToastrService,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.paymentForm = this.formbuilder.group({
       paymentMethod: [''],
@@ -38,14 +41,20 @@ export class PaymentMethodPageComponent implements OnInit {
     this.dataFromMerchant.merchantTimeStamp =
       this.route.snapshot.queryParamMap.get('merchantTimestamp');
 
-    this.pspService.getSubscribedPaymentMethodsByMerchantOrderId(this.dataFromMerchant.merchantOrderId).subscribe({
-      next: (res: any) => {
-        this.subscribedPaymentMethods = res.paymentMethods.map((m: string) => m.toLowerCase());
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    }); 
+    this.pspService
+      .getSubscribedPaymentMethodsByMerchantOrderId(
+        this.dataFromMerchant.merchantOrderId
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.subscribedPaymentMethods = res.paymentMethods.map((m: string) =>
+            m.toLowerCase()
+          );
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   buyItem() {
@@ -83,7 +92,7 @@ export class PaymentMethodPageComponent implements OnInit {
   }
 
   private displayError(message: string) {
-    this.snackBar.open(message, 'Close', { duration: 5000})
+    this.snackBar.open(message, 'Close', { duration: 5000 });
   }
 
   bitcoinPayment() {
@@ -109,13 +118,23 @@ export class PaymentMethodPageComponent implements OnInit {
   }
 
   qrPayment() {
-    // this.pspService.qrPayment(this.dataFromMerchant).subscribe({
-    //   next: (res: any) => {
-    //     console.log(res);
-    //   },
-    //   error: (err: any) => {
-    //     console.log(err);
-    //   }
-    // })
+    this.pspService.qrPayment(this.dataFromMerchant).subscribe({
+      next: (response: any) => {
+        if (response && response.paymentUrl) {
+          const qrCode = response.paymentUrl.split("|")[0];
+          const link = response.paymentUrl.split("|")[1];
+          console.log(link)
+          const parsedUrl = new URL(link);
+          const path = parsedUrl.pathname;
+          console.log(parsedUrl);
+          this.router.navigate([path], {
+            state: { qrCode: qrCode },
+          });
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 }

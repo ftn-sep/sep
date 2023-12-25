@@ -21,6 +21,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { initializeKeycloak } from './init/keycloak-init.factory';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { QrcodePaymentPageComponent } from './modules/payment/qrcode-payment-page/qrcode-payment-page.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CardPaymentPageComponent,
     SuccessPageComponent,
     ErrorPageComponent,
-    FailedPageComponent
+    FailedPageComponent,
+    QrcodePaymentPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,9 +60,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService]
-    } 
+      deps: [KeycloakService],
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

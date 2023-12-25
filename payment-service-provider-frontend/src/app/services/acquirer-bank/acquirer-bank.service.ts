@@ -18,4 +18,3 @@ export class AcquirerBankService {
     return this.http.post(this.apiHost + '/acquirer/payment-card-details', paymentDetails);
   }
 }
-

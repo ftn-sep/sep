@@ -1,0 +1,64 @@
+<div class="wrapper">
+<div class="container p-0">
+    <div style="text-align: center;">
+        <div>
+            <img id="qrCodeImage" [src]="qrCode" alt="QR Code"/>
+            <button class="button button--width" (click)="scanQRCode()">
+                Scan
+            </button>
+        </div>
+    </div>
+    <div class="card px-4 mt-3" *ngIf="qrCodeLoaded">
+      <p class="h8 py-3">Payment Details</p>
+      <div class="row gx-3">
+        <div class="col-6">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Reciever</p>
+            <input class="form-control mb-3" type="text" [disabled]="true" [value]="receiver">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Payer</p>
+            <input class="form-control mb-3" type="text" [disabled]="true" [value]="payer">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Reciever Account</p>
+            <input class="form-control mb-3" type="text"  [disabled]="true" [value]="receiverAccount">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Payer Account</p>
+            <input class="form-control mb-3" type="text"  [disabled]="true" [value]="payerAccount">
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Amount $</p>
+            <input class="form-control mb-3" type="text" [disabled]="true" [value]="amount + ',00 $'">
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Amount RSD</p>
+            <input class="form-control mb-3" type="text" [disabled]="true" [value]="amountrsd + ',00 RSD'">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-flex flex-column">
+            <p class="text mb-1">Payment Description</p>
+            <input class="form-control mb-3 pt-2" type="text" placeholder="***"[disabled]="true" [value]="description">
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="btn btn-primary mb-3">
+              <button type="submit" class="btn btn-primary" (click)="pay()">Confirm Payment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
