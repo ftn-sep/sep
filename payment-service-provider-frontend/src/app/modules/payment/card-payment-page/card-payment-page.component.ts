@@ -62,4 +62,11 @@ export class CardPaymentPageComponent implements OnInit {
       }
     });
   }
+
+  isFieldValid(field: string) {
+    return (
+      this.paymentForm.get(field)?.touched &&
+      !this.paymentForm.get(field)?.valid
+    );
+  }
 }
