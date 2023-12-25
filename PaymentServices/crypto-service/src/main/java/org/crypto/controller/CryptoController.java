@@ -2,6 +2,7 @@ package org.crypto.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.crypto.dto.CompletePayment;
 import org.crypto.model.Payment;
 import org.crypto.service.PaymentService;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
@@ -24,24 +25,20 @@ public class CryptoController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> cardDetailsPayment(@RequestBody  PaymentUrlAndIdRequest paymentRequest) {
-
+    public ResponseEntity<?> cardDetailsPayment(@RequestBody PaymentUrlAndIdRequest paymentRequest) {
         PaymentUrlIdResponse paymentResult = cryptoService.pay(paymentRequest);
 
         return new ResponseEntity<>(paymentResult, HttpStatus.OK);
 
     }
 
-    @GetMapping(
-            value = "/get-payments",
+    @PostMapping(
+            value = "/complete-payment",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> getPayments(){
-        cryptoService.completePayment();
-        return new ResponseEntity<>(new Payment(), HttpStatus.OK);
+    public ResponseEntity<?> completePayment(@RequestBody CompletePayment completePayment){
+        cryptoService.completePayment(completePayment);
+
+        return new ResponseEntity<>("Payment updated !", HttpStatus.OK);
     }
-
-
-
-
 }

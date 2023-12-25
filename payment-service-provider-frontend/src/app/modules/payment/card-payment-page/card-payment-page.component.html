@@ -4,28 +4,49 @@
       <p class="h8 py-3">Payment Details</p>
       <form [formGroup]="paymentForm" (ngSubmit)="pay()">
       <div class="row gx-3">
-        <div class="col-12">
+        <div class="col-12" >
           <div class="d-flex flex-column">
             <p class="text mb-1">Name and Surname</p>
-            <input class="form-control mb-3" type="text" placeholder="James Bond" formControlName="cardHolderName" required>
+            <input class="form-control mb-3" 
+                   type="text" 
+                   placeholder="James Bond" 
+                   formControlName="cardHolderName" 
+                   [ngClass]="{ 'error': isFieldValid('cardHolderName'), 'valid': paymentForm.get('cardHolderName')?.valid }"
+                   required>
           </div>
         </div>
         <div class="col-12">
           <div class="d-flex flex-column">
             <p class="text mb-1">Card Number</p>
-            <input class="form-control mb-3" type="text" placeholder="1111 1111 1111 1111" formControlName="pan" required>
+            <input class="form-control mb-3" 
+                   type="text"  
+                   placeholder="1111 1111 1111 1111"  
+                   formControlName="pan"
+                   [ngClass]="{ 'error': isFieldValid('pan'), 'valid': paymentForm.get('pan')?.valid }"
+                   required>
           </div>
         </div>
         <div class="col-6">
           <div class="d-flex flex-column">
             <p class="text mb-1">Expiry date</p>
-            <input class="form-control mb-3" type="text" placeholder="MM/YY" formControlName="cardExpiresIn" required>
+            <input class="form-control mb-3" 
+                   type="text" 
+                   placeholder="MM/YY" 
+                   formControlName="cardExpiresIn" 
+                   [ngClass]="{ 'error': isFieldValid('cardExpiresIn'), 'valid': paymentForm.get('cardExpiresIn')?.valid }"
+                   required>
           </div>
         </div>
         <div class="col-6">
           <div class="d-flex flex-column">
             <p class="text mb-1">CVV/CVC</p>
-            <input class="form-control mb-3 pt-2" type="password" placeholder="***" formControlName="securityCode" required>
+            <input class="form-control mb-3 pt-2" 
+                   type="password" 
+                   maxlength="3"
+                   placeholder="***" 
+                   formControlName="securityCode"
+                   [ngClass]="{ 'error': isFieldValid('securityCode'), 'valid': paymentForm.get('securityCode')?.valid }" 
+                   required>
           </div>
         </div>
         <div class="col-12">
