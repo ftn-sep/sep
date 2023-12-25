@@ -146,7 +146,7 @@ public class AcquirerService {
     }
 
     public PaymentUrlIdResponse generateQRCode(PaymentUrlAndIdRequest paymentRequest) throws IOException, InterruptedException {
-        var payload = String.format("K:PR|V:01|C:1|R:100000012345678940|N:AGENCIJA|I:RSD%d,00|SF:289|S:Plaćanje|RO:001234", (int)paymentRequest.getAmount()*60);
+        var payload = String.format("K:PR|V:01|C:1|R:100000012345678940|N:AGENCIJA|I:RSD%d,00|SF:289|S:Plaćanje|RO:001234", (int)paymentRequest.getAmount()*120);
 
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(QRCODE_GENERATE_URL))
@@ -161,7 +161,7 @@ public class AcquirerService {
             throw new BadRequestException("Error while generating QR code");
         }
 
-        //validatePaymentUrlRequest(paymentRequest);
+        validatePaymentUrlRequest(paymentRequest);
 
         UUID uuid = UUID.randomUUID();
         Payment payment = paymentRepository.save(

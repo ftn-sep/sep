@@ -28,7 +28,7 @@ export class CardPaymentPageComponent implements OnInit {
 
   ngOnInit() {
     this.paymentForm = this.formBuilder.group({
-      cardHolderName: ['', Validators.required],
+      cardHolderName: ['', [Validators.required, Validators.pattern("^((?:[A-Za-z]+ ?){1,3})$")]],
       pan: ['', [Validators.required, Validators.pattern('^\\d{4}(?:\\s*\\d{4}){3}$')]],
       cardExpiresIn: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])/(2[3-9]|[3-9][0-9])$')]],
       securityCode: ['', [Validators.required, Validators.pattern('[0-9]{3}'), Validators.minLength(3), Validators.maxLength(3)]]

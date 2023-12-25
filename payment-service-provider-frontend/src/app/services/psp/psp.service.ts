@@ -27,10 +27,6 @@ export class PspService {
     return this.http.post(this.apiHost + '/psp/payment/qrcode', paymentRequest);
   }
 
-  generateQRCode(paymentRequest: any) {
-    return this.http.post(this.apiHost + '/psp/payment/generate-qrcode', paymentRequest);
-  }
-
   paypalPayment(paymentRequest: any) {
     return this.http.post(this.apiHost + '/psp/payment/paypal', paymentRequest);
   }

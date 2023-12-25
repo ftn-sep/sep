@@ -40,7 +40,7 @@ public class Payment {
     @Column
     private double amount;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
     @Column

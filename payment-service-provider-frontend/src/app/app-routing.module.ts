@@ -12,18 +12,12 @@ import { QrcodePaymentPageComponent } from './modules/payment/qrcode-payment-pag
 const routes: Routes = [
   { path: '', redirectTo: '/content', pathMatch: 'full' },
   { path: 'payment-method-page', component: PaymentMethodPageComponent },
-  {
-    path: 'acquirer-bank/card-details/:uuid/:paymentId',
-    component: CardPaymentPageComponent,
-  },
+  { path: 'acquirer-bank/card-details/:uuid/:paymentId', component: CardPaymentPageComponent },
   { path: 'success-payment', component: SuccessPageComponent },
   { path: 'error-payment', component: ErrorPageComponent },
   { path: 'failed-payment', component: FailedPageComponent },
-  //{ path: 'content', component: ContentComponent, canActivate: [AuthGuard]},
-  {
-    path: 'qrcode-payment/:uuid/:paymentId',
-    component: QrcodePaymentPageComponent,
-  },
+  { path: 'content', component: ContentComponent, canActivate: [AuthGuard]},
+  { path: 'qrcode-payment/:uuid/:paymentId', component: QrcodePaymentPageComponent },
 ];
 
 @NgModule({
