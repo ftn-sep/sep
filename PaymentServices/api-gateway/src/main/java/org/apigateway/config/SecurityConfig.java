@@ -17,7 +17,7 @@ public class SecurityConfig {
         serverHttpSecurity
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("api/psp/payment-methods").authenticated()
+       //                 .pathMatchers("api/psp/payment-methods").authenticated()
                         .anyExchange().permitAll())
 //                        .pathMatchers("/eureka/**").permitAll()
 //                        .pathMatchers("/actuator/**").permitAll()

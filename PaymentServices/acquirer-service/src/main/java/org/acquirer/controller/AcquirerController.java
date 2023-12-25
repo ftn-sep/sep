@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.acquirer.dto.PaymentResultResponse;
 import org.acquirer.dto.SellersBankInformationDto;
 import org.acquirer.service.AcquirerService;
-import org.apache.coyote.Response;
 import org.sep.dto.card.CardDetails;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
@@ -55,5 +54,15 @@ public class AcquirerController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(sellersBankInformationDto);
+    }
+
+    @PostMapping(
+            value = "/generateQRCode",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> generateQRCode(@RequestBody PaymentUrlAndIdRequest paymentRequest) throws Exception {
+        PaymentUrlIdResponse paymentUrlIdResponse = acquirerService.generateQRCode(paymentRequest);
+        return new ResponseEntity<>(paymentUrlIdResponse, HttpStatus.OK);
     }
 }

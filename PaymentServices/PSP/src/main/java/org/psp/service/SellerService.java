@@ -96,17 +96,18 @@ public class SellerService {
     }
 
     public PaymentMethodsDto getSubscribedPaymentMethods(String merchantOrderId, String username) {
-        Optional<Seller> optionalSeller;
-        if (merchantOrderId != null) {
-            Long sellerId = Long.valueOf(merchantOrderId.substring(0, 4));
-            optionalSeller = sellerRepository.findBySellerId(sellerId);
-        } else if (username != null) {
-            optionalSeller = sellerRepository.findByUsername(username);
-        } else {
-            throw new BadRequestException("There is no merchantOrderId or merchantUsername passed");
-        }
-        Set<PaymentMethod> paymentMethods = (optionalSeller.isEmpty()) ? new HashSet<>() : optionalSeller.get().getAvailablePaymentMethods();
-        boolean hasMerchantIdAndPassword = optionalSeller.isPresent() && optionalSeller.get().getMerchantId() != null;
-        return new PaymentMethodsDto(paymentMethods, hasMerchantIdAndPassword);
+        return new PaymentMethodsDto(Set.of(PaymentMethod.CARD, PaymentMethod.QR), true);
+//        Optional<Seller> optionalSeller;
+//        if (merchantOrderId != null) {
+//            Long sellerId = Long.valueOf(merchantOrderId.substring(0, 4));
+//            optionalSeller = sellerRepository.findBySellerId(sellerId);
+//        } else if (username != null) {
+//            optionalSeller = sellerRepository.findByUsername(username);
+//        } else {
+//            throw new BadRequestException("There is no merchantOrderId or merchantUsername passed");
+//        }
+//        Set<PaymentMethod> paymentMethods = (optionalSeller.isEmpty()) ? new HashSet<>() : optionalSeller.get().getAvailablePaymentMethods();
+//        boolean hasMerchantIdAndPassword = optionalSeller.isPresent() && optionalSeller.get().getMerchantId() != null;
+//        return new PaymentMethodsDto(paymentMethods, hasMerchantIdAndPassword);
     }
 }

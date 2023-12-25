@@ -1,0 +1,25 @@
+
+  .button {
+    align-items: center;
+    background-color: lightgray;
+    border-radius: 999em;
+    color: lightslategray;
+    display: flex;
+    gap: 0.5em;
+    justify-content: center;
+    padding-block: 0.75em;
+    padding-inline: 1em;
+    transition: 0.3s;
+    position: relative;
+    left: 45%;
+}
+  
+  .button:focus,
+  .button:hover {
+    background-color: lightblue;
+  }
+  
+  .button--width {
+    inline-size: 10%;
+  }
+  

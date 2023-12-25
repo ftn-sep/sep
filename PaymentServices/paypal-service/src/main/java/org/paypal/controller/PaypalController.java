@@ -3,6 +3,7 @@ package org.paypal.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.paypal.service.PaypalService;
 import org.sep.dto.card.PaymentUrlAndIdRequest;
+import org.sep.dto.card.PaymentUrlIdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,8 +24,8 @@ public class PaypalController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> payment(@RequestBody PaymentUrlAndIdRequest paymentRequest)  throws Exception {
-        var PaymentUrlIdResponse = paypalService.createOrder(paymentRequest);
+    public ResponseEntity<?> payment(@RequestBody PaymentUrlAndIdRequest paymentRequest) throws Exception {
+        PaymentUrlIdResponse PaymentUrlIdResponse = paypalService.createOrder(paymentRequest);
         return ResponseEntity.ok(PaymentUrlIdResponse);
     }
 

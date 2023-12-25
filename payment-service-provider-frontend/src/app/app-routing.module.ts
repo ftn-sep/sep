@@ -7,15 +7,23 @@ import { ErrorPageComponent } from './modules/payment/error-page/error-page.comp
 import { FailedPageComponent } from './modules/payment/failed-page/failed-page.component';
 import { ContentComponent } from './modules/auth/content/content.component';
 import { AuthGuard } from './guard/auth.guard';
+import { QrcodePaymentPageComponent } from './modules/payment/qrcode-payment-page/qrcode-payment-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/content', pathMatch: 'full' },
-  { path: 'payment-method-page', component: PaymentMethodPageComponent},
-  { path: 'acquirer-bank/card-details/:uuid/:paymentId', component: CardPaymentPageComponent },
-  { path: 'success-payment', component: SuccessPageComponent},
-  { path: 'error-payment', component: ErrorPageComponent},
-  { path: 'failed-payment', component: FailedPageComponent},
-  { path: 'content', component: ContentComponent, canActivate: [AuthGuard]},
+  { path: 'payment-method-page', component: PaymentMethodPageComponent },
+  {
+    path: 'acquirer-bank/card-details/:uuid/:paymentId',
+    component: CardPaymentPageComponent,
+  },
+  { path: 'success-payment', component: SuccessPageComponent },
+  { path: 'error-payment', component: ErrorPageComponent },
+  { path: 'failed-payment', component: FailedPageComponent },
+  //{ path: 'content', component: ContentComponent, canActivate: [AuthGuard]},
+  {
+    path: 'qrcode-payment/:uuid/:paymentId',
+    component: QrcodePaymentPageComponent,
+  },
 ];
 
 @NgModule({
