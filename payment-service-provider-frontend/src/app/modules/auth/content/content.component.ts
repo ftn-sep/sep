@@ -70,27 +70,44 @@ export class ContentComponent {
     return !this.accountNumberNotNeeded && this.selectedMethods.some(m => m === 'card' || m === 'qr');
   }
   submit() {
-    const obj = {
+    const payload = {
       selectedMethods: this.selectedMethods,
       sellerUsername: this.keycloakService.getKeycloakInstance().idTokenParsed!['email'],
       accountNumber: this.paymentForm.value.accountNumber
     };
 
-    if (!obj.sellerUsername || (!obj.accountNumber && this.isNeededAccNumber())) {
+    console.log(payload);
+    
+    if (!payload.sellerUsername || (!payload.accountNumber && this.isNeededAccNumber())) {
       this.toastrService.error('Fill Inputs');
       return;
     }
 
-    this.pspService.sendNewPaymentMethods(obj).subscribe({
+    if (!this.validateAccNumber(payload)) {
+      this.toastrService.warning("Account Number is not Valid!");
+      return;
+    }
+
+    this.pspService.sendNewPaymentMethods(payload).subscribe({
       next: (res: any) => {
         this.toastrService.success('Successfully changed subscriptions!');
         // send res.sellerId to merchant
         localStorage.setItem('sellerId', res.sellerId)
       },
       error: (err) => {
+        console.log(err);
         this.toastrService.error("Something went wrong");
       }
     });
+  }
+
+  validateAccNumber(payload: any): boolean {
+    if (this.isNeededAccNumber()) {
+      if (isNaN(+payload.accountNumber) || payload.accountNumber.length !== 13) {
+        return false;
+      }
+    }
+    return true;
   }
 
   logout() {
