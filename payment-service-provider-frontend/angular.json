@@ -69,6 +69,11 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options":{
+            "ssl": true,
+            "sslCert": "./src/ssl/localhost.crt",
+            "sslKey": "./src/ssl/localhost.key"
+          },
           "configurations": {
             "production": {
               "buildTarget": "payment-service-provider-frontend:build:production"

@@ -16,7 +16,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/api/acquirer")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "https://localhost:4200/")
 public class AcquirerController {
 
     private final AcquirerService acquirerService;

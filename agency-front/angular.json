@@ -76,7 +76,10 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 4201
+            "port": 4201,
+            "ssl": true,
+            "sslCert": "./src/ssl/localhost.crt",
+            "sslKey": "./src/ssl/localhost.key"
           }
         },
         "extract-i18n": {
