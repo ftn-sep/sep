@@ -40,5 +40,6 @@ public class Seller {
     @Enumerated(EnumType.STRING)
     private Set<PaymentMethod> availablePaymentMethods = new HashSet<>();
 
-
+    @Column
+    private String apiKey;
 }

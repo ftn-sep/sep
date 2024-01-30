@@ -20,6 +20,7 @@ import org.sep.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,10 @@ public class AcquirerService {
     private final TwoBanksPaymentService twoBanksPaymentService;
     private final TransactionDetailsService transactionDetailsService;
     private final BankBinRepository bankBinRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -141,12 +146,15 @@ public class AcquirerService {
 
     private void createMerchantIdAndPassword(BankAccount bankAccount) {
         bankAccount.setMerchantId(UUID.randomUUID().toString().substring(0, 20));
-        bankAccount.setMerchantPassword(UUID.randomUUID().toString().replace("-", "").substring(0, 25));
+        bankAccount.setMerchantPassword(
+                encoder.encode(
+                        UUID.randomUUID().toString().replace("-", "").substring(0, 25))
+        );
         bankAccountRepository.save(bankAccount);
     }
 
     public PaymentUrlIdResponse generateQRCode(PaymentUrlAndIdRequest paymentRequest) throws IOException, InterruptedException {
-        var payload = String.format("K:PR|V:01|C:1|R:100000012345678940|N:AGENCIJA|I:RSD%d,00|SF:289|S:Plaćanje|RO:001234", (int)paymentRequest.getAmount()*120);
+        var payload = String.format("K:PR|V:01|C:1|R:100000012345678940|N:AGENCIJA|I:RSD%d,00|SF:289|S:Plaćanje|RO:001234", (int) paymentRequest.getAmount() * 120);
 
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(QRCODE_GENERATE_URL))

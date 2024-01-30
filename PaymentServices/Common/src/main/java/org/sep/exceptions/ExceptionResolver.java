@@ -23,6 +23,13 @@ public class ExceptionResolver {
         return new ResponseEntity<>(exception.getMessage(), headers, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(WrongApiKeyException.class)
+    public ResponseEntity<?> wrongApiKeyException(WrongApiKeyException exception) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<>(exception.getMessage(), headers, HttpStatus.UNAUTHORIZED);
+    }
+    
     @ExceptionHandler(NotSubscribedToPaymentMethod.class)
     public ResponseEntity<?> notSubscribedException(NotSubscribedToPaymentMethod exception) {
         HttpHeaders headers = new HttpHeaders();
