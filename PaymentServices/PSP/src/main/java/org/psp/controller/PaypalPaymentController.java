@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api/psp")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:4200", "null"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"https://localhost:4200", "null"}, allowedHeaders = "*")
 public class PaypalPaymentController {
 
     private final PaypalPaymentService paypalPaymentService;

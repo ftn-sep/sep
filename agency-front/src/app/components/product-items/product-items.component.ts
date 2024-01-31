@@ -15,8 +15,8 @@ export class ProductItemsComponent {
   }
 
   buy(item: any) {
-      const merchOrderId = '9918' + this.getRandomSixDigits();
-      const apiKey = 'c6cc0d0d8eb94653b96c6731a';
+      const merchOrderId = '8047' + this.getRandomSixDigits();
+      const apiKey = '6c43a912c7c2436cbba0ce9ff';
       const merchTimestamp = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss')
       window.location.href = `http://localhost:4200/payment-method-page?merchantOrderId=${merchOrderId}&merchantTimestamp=${merchTimestamp}&amount=${item.price}&apiKey=${apiKey}`
   }

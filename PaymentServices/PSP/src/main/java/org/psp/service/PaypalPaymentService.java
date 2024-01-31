@@ -24,9 +24,9 @@ public class PaypalPaymentService {
     @Autowired
     private PasswordEncoder encoder;
 
-    private static final String SUCCESS_URL = "http://localhost:4200/success-payment";
-    private static final String FAILED_URL = "http://localhost:4200/failed-payment";
-    private static final String ERROR_URL = "http://localhost:4200/error-payment";
+    private static final String SUCCESS_URL = "https://localhost:4200/success-payment";
+    private static final String FAILED_URL = "https://localhost:4200/failed-payment";
+    private static final String ERROR_URL = "https://localhost:4200/error-payment";
 
     public PaymentUrlIdResponse paypalPayment(PaymentRequestFromClient paymentRequest) {
         checkIfSellerIsSubscribedForPaypalPayment(paymentRequest);
