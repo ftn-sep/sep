@@ -8,6 +8,8 @@ import org.sep.dto.card.PaymentUrlAndIdRequest;
 import org.sep.dto.card.PaymentUrlIdResponse;
 import org.sep.enums.PaymentMethod;
 import org.sep.exceptions.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,8 @@ public class QrCodePaymentService {
 
     private final PaymentService paymentService;
     private final SellerRepository sellerRepository;
+    @Autowired
+    private PasswordEncoder encoder;
 
     private static final String SUCCESS_URL = "http://localhost:4200/success-payment";
     private static final String FAILED_URL = "http://localhost:4200/failed-payment";
@@ -28,6 +32,7 @@ public class QrCodePaymentService {
         Seller seller = sellerRepository.findBySellerId(sellerId)
                 .orElseThrow(() -> new NotFoundException("Seller doesn't exist!"));
 
+        AuthService.checkIfApiKeysMatches(paymentRequest.getApiKey(), seller.getApiKey(), encoder);
         SubscriberService.checkIfSellerIsSubscribedToMethod(seller, PaymentMethod.QR);
 
         PaymentUrlAndIdRequest paymentReq = PaymentUrlAndIdRequest.builder()

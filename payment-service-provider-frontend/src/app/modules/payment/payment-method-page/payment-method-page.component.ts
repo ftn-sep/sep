@@ -40,6 +40,8 @@ export class PaymentMethodPageComponent implements OnInit {
       this.route.snapshot.queryParamMap.get('merchantOrderId');
     this.dataFromMerchant.merchantTimeStamp =
       this.route.snapshot.queryParamMap.get('merchantTimestamp');
+    this.dataFromMerchant.apiKey = 
+      this.route.snapshot.queryParamMap.get('apiKey');
 
     this.pspService
       .getSubscribedPaymentMethodsByMerchantOrderId(

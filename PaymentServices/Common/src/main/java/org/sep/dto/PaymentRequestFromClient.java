@@ -27,4 +27,6 @@ public class PaymentRequestFromClient {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime merchantTimeStamp;
 
+    private String apiKey;
+
 }
