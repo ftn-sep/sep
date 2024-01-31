@@ -6,13 +6,13 @@ export function initializeKeycloak(
     return () =>
       keycloak.init({
         config: {
-          url: 'http://localhost:8080',
+          url: 'https://localhost:8443',
           realm: 'psp-realm',
           clientId: 'frontend',
         },
         initOptions: {
             pkceMethod: 'S256',
-            redirectUri: 'http://localhost:4200/',
+            redirectUri: 'https://localhost:4200/',
             checkLoginIframe: false
         }
       });
