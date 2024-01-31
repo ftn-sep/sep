@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class SellerDto {
 
     private Long sellerId;
+    private String apiKey;
     
 }

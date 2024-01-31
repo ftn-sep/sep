@@ -2,16 +2,20 @@ package org.psp.service;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import org.psp.controller.SellerController;
 import org.psp.dto.PaymentMethodsDto;
 import org.psp.dto.SelectedPaymentMethodsDto;
 import org.psp.dto.SellerDto;
 import org.psp.dto.SellersBankInformationDto;
+import org.psp.model.LogLevel;
 import org.psp.model.Seller;
 import org.psp.repository.SellerRepository;
 import org.psp.service.feignClients.AcquirerClient;
 import org.sep.enums.PaymentMethod;
 import org.sep.exceptions.BadRequestException;
 import org.sep.exceptions.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,26 +26,35 @@ public class SellerService {
 
     private final SellerRepository sellerRepository;
     private final AcquirerClient acquirerClient;
+    @Autowired
+    private PasswordEncoder encoder;
 
     public SellerDto newPaymentMethods(SelectedPaymentMethodsDto selectedPaymentMethodsDto) {
         Optional<Seller> optionalSeller = sellerRepository.findByUsername(selectedPaymentMethodsDto.getSellerUsername());
         Seller seller;
+        String apiKey = null;
 
         if (optionalSeller.isPresent()) {
             seller = optionalSeller.get();
-            this.changePaymentMethods(seller, selectedPaymentMethodsDto);
+            changePaymentMethods(seller, selectedPaymentMethodsDto);
         } else {
-            seller = newSeller(selectedPaymentMethodsDto);
+            apiKey = generateApiKey();
+            seller = newSeller(selectedPaymentMethodsDto, apiKey);
             changePaymentMethods(seller, selectedPaymentMethodsDto);
         }
 
         return SellerDto.builder()
                 .sellerId(seller.getSellerId())
+                .apiKey(apiKey)                     // only return api key for new sellers
                 .build();
     }
 
+    private String generateApiKey() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 25);
+    }
 
-    private Seller newSeller(SelectedPaymentMethodsDto selectedPaymentMethodsDto) {
+
+    private Seller newSeller(SelectedPaymentMethodsDto selectedPaymentMethodsDto, String apiKey) {
         Seller seller = new Seller();
         seller.setUsername(selectedPaymentMethodsDto.getSellerUsername());
 
@@ -54,6 +67,7 @@ public class SellerService {
         }
 
         seller.setSellerId(generateSellerId());
+        seller.setApiKey(encoder.encode(apiKey));
         return sellerRepository.save(seller);
     }
 
